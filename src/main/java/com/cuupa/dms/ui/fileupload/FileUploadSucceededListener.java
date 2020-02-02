@@ -84,7 +84,7 @@ public class FileUploadSucceededListener implements ComponentEventListener<Succe
         try {
             byte[] value = IOUtils.toByteArray(inputStream);
             return externSemanticService.analize(value);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return Collections.emptyList();

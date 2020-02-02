@@ -183,13 +183,15 @@ public class FileUploadOverview extends HorizontalLayout implements HasUrlParame
         }
 
         public void save() {
-            if (writeFile()) {
-                writeDatabase();
+            Path path = writeFile();
+            if (path != null) {
+                writeDatabase(path);
             }
         }
 
-        private void writeDatabase() {
+        private void writeDatabase(Path path) {
             storageService.save(new Document(0L,
+                                             path.toString(),
                                              properties.getFilename(),
                                              properties.getFrom(),
                                              AccessControlFactory.getInstance()
@@ -199,7 +201,7 @@ public class FileUploadOverview extends HorizontalLayout implements HasUrlParame
                                              properties.getTags().stream().map(Tag::new).collect(Collectors.toList())));
         }
 
-        private boolean writeFile() {
+        private Path writeFile() {
             try {
                 Path
                         path =
@@ -208,15 +210,15 @@ public class FileUploadOverview extends HorizontalLayout implements HasUrlParame
                                   AccessControlFactory.getInstance().createAccessControl().getPrincipalName() +
                                   File.separator +
                                   properties.getFilename());
-                path.toFile().mkdirs();
+                path.getParent().toFile().mkdirs();
                 if (!Files.exists(path)) {
                     Files.write(path, properties.getContent(), StandardOpenOption.CREATE_NEW);
                 }
-                return true;
+                return path;
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return false;
+            return null;
         }
     }
 }

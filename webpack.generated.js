@@ -163,7 +163,7 @@ module.exports = {
       compiler.hooks.afterEmit.tapAsync("FlowIdPlugin", (compilation, done) => {
         if (!devMode) {
           // eslint-disable-next-line no-console
-          console.log("         Emitted " + statsFile)
+          console.log("         Emitted " + statsFile);
           fs.writeFile(statsFile, JSON.stringify(compilation.getStats().toJson(), null, 1), done);
         } else {
           // eslint-disable-next-line no-console

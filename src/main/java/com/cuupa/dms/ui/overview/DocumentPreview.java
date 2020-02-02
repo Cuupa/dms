@@ -2,18 +2,13 @@ package com.cuupa.dms.ui.overview;
 
 import com.cuupa.dms.storage.document.Document;
 import com.cuupa.dms.storage.tag.Tag;
+import com.cuupa.dms.ui.documentviews.PdfView;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.server.StreamResource;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,11 +22,11 @@ public class DocumentPreview extends HorizontalLayout {
 
     private final VerticalLayout previewLayout = new VerticalLayout();
 
+    private PdfView lastView = new PdfView();
+
     private final DocumentPropertiesLayout propertiesLayout = new DocumentPropertiesLayout();
 
     private List<Tag> tagsByOwner;
-
-    private Image previewImage = new Image();
 
     public DocumentPreview(DocumentGrid documentGrid, List<Tag> tagsByOwner) {
         this.documentGrid = documentGrid;
@@ -40,24 +35,20 @@ public class DocumentPreview extends HorizontalLayout {
 
         final Tabs tabs = createTabs();
         final VerticalLayout verticalLayout = new VerticalLayout();
-
+        previewLayout.add(lastView);
         verticalLayout.add(tabs);
         verticalLayout.add(previewLayout);
         verticalLayout.add(propertiesLayout);
+        propertiesLayout.setVisible(false);
         add(verticalLayout);
     }
 
     public void loadImage() {
         final Document document = documentGrid.asSingleSelect().getValue();
         if (document != null) {
-            StreamResource
-                    resource =
-                    new StreamResource(document.getImage(), () -> getImageInputStream(document.getImage()));
-            Image image = new Image(resource, document.getName());
-            image.setMaxWidth("90%");
-            image.setMaxHeight("90%");
-            previewLayout.replace(previewImage, image);
-            this.previewImage = image;
+            PdfView pdfView = new PdfView(document);
+            previewLayout.replace(lastView, pdfView);
+            lastView = pdfView;
         }
     }
 
@@ -91,14 +82,5 @@ public class DocumentPreview extends HorizontalLayout {
             pagesShown.add(selectedPage);
         });
         return tabs;
-    }
-
-    private InputStream getImageInputStream(String image) {
-        try {
-            return new FileInputStream(new File(image));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

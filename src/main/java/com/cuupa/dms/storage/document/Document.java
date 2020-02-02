@@ -24,8 +24,9 @@ public class Document {
 
     private String filename;
 
-    public Document(long id, String name, String sender, String owner, LocalDateTime createDate, List<Tag> tags) {
+    public Document(long id, String filename, String name, String sender, String owner, LocalDateTime createDate, List<Tag> tags) {
         this.id = id;
+        this.filename = filename;
         this.name = name;
         this.sender = sender;
         this.owner = owner;

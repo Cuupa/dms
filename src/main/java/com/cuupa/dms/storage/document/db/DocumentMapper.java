@@ -12,6 +12,7 @@ public class DocumentMapper {
         Document
                 documentEntity =
                 new Document(document.getId(),
+                             document.getFilename(),
                              document.getName(),
                              document.getSender(),
                              document.getOwner(),
@@ -25,6 +26,7 @@ public class DocumentMapper {
         com.cuupa.dms.storage.document.Document
                 uiDocument =
                 new com.cuupa.dms.storage.document.Document(document.getId(),
+                                                            document.getFilename(),
                                                             document.getName(),
                                                             document.getSender(),
                                                             document.getOwner(),

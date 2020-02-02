@@ -27,6 +27,7 @@ public class DsmApplication {
         Document
                 document =
                 new Document(0L,
+                             "",
                              "filename.pdf",
                              "company 1",
                              "user",
@@ -36,6 +37,7 @@ public class DsmApplication {
         Document
                 document2 =
                 new Document(0L,
+                             "",
                              "filename2.pdf",
                              "company 2",
                              "user",
@@ -45,6 +47,7 @@ public class DsmApplication {
         Document
                 document3 =
                 new Document(0L,
+                             "",
                              "filename3.pdf",
                              "company 2",
                              "a",
