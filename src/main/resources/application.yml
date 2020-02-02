@@ -1,0 +1,19 @@
+logging:
+  level: debug
+  level.org.apache.pdfbox.*: fatal
+
+services.remote:
+  semantic:
+    url: "http://localhost:8081/classify"
+
+spring:
+  data:
+    mongodb:
+      host: "localhost"
+      port: 27017
+      database: dms
+      uri: "mongodb://localhost"
+  servlet:
+    multipart:
+      max-file-size: 10GB
+      max-request-size: 10GB
