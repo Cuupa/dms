@@ -37,6 +37,7 @@ public class DocumentPreview extends HorizontalLayout {
         final VerticalLayout verticalLayout = new VerticalLayout();
         previewLayout.add(lastView);
         verticalLayout.add(tabs);
+        previewLayout.setSizeFull();
         verticalLayout.add(previewLayout);
         verticalLayout.add(propertiesLayout);
         propertiesLayout.setVisible(false);
