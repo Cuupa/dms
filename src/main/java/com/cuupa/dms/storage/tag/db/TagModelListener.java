@@ -10,7 +10,7 @@ public class TagModelListener extends AbstractMongoEventListener<com.cuupa.dms.s
 
     private static final Log LOGGER = LogFactory.getLog(TagModelListener.class);
 
-    private TagSequenceGenerator tagSequenceGenerator;
+    private final TagSequenceGenerator tagSequenceGenerator;
 
     public TagModelListener(@Autowired TagSequenceGenerator sequenceGenerator) {
         this.tagSequenceGenerator = sequenceGenerator;

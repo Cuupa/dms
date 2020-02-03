@@ -56,11 +56,11 @@ public class Tag implements Comparable<Tag> {
             return 0;
         }
 
-        if (this.name == null && tag.name != null) {
+        if (this.name == null) {
             return -1;
         }
 
-        if (this.name != null && tag.name == null) {
+        if (tag.name == null) {
             return 1;
         }
         return this.name.compareTo(tag.name);

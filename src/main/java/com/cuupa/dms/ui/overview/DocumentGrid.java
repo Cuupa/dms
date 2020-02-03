@@ -21,7 +21,7 @@ public class DocumentGrid extends Grid<Document> {
     public DocumentGrid() {
         setSizeFull();
         addContent();
-        UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> setCustomVisibility(e.getWidth()));
+        //UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> setCustomVisibility(e.getWidth()));
     }
 
 
@@ -44,17 +44,11 @@ public class DocumentGrid extends Grid<Document> {
         return tags;
     }
 
-    private void setCustomVisibility(int width) {
-    }
-
     @Override
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
 
         UI.getCurrent().getInternals().setExtendedClientDetails(null);
-        UI.getCurrent().getPage().retrieveExtendedClientDetails(e -> {
-            setCustomVisibility(e.getBodyClientWidth());
-        });
     }
 
 }

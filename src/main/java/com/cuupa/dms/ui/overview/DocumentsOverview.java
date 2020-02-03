@@ -21,15 +21,11 @@ public class DocumentsOverview extends HorizontalLayout implements HasUrlParamet
 
     public static final String VIEW_NAME = "Documents";
 
-    private final DocumentGrid documentGrid;
-
     private final DocumentPreview documentPreview;
 
     private final HorizontalLayout horizontalLayout;
 
     private final DocumentDataProvider dataProvider;
-
-    private TextField filter;
 
     public DocumentsOverview(@Autowired StorageService storageService) {
         setSizeFull();
@@ -37,7 +33,7 @@ public class DocumentsOverview extends HorizontalLayout implements HasUrlParamet
                 new DocumentDataProvider(storageService,
                                          AccessControlFactory.getInstance().createAccessControl().getPrincipalName());
 
-        documentGrid = new DocumentGrid();
+        DocumentGrid documentGrid = new DocumentGrid();
         documentPreview =
                 new DocumentPreview(documentGrid,
                                     storageService.findTagsByOwner(AccessControlFactory.getInstance()
@@ -47,7 +43,7 @@ public class DocumentsOverview extends HorizontalLayout implements HasUrlParamet
         documentGrid.addSelectionListener(getItemClickEventComponentEventListener());
         documentGrid.setDataProvider(dataProvider);
 
-        filter = new TextField();
+        TextField filter = new TextField();
         filter.setWidth("100%");
         filter.setPlaceholder(Constants.FILTER_TEXT);
         filter.addValueChangeListener(event -> dataProvider.setFilter(event.getValue()));

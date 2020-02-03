@@ -10,7 +10,7 @@ public class DocumentModelListener extends AbstractMongoEventListener<Document> 
 
     private static final Log LOGGER = LogFactory.getLog(DocumentModelListener.class);
 
-    private DocumentSequenceGenerator documentSequenceGenerator;
+    private final DocumentSequenceGenerator documentSequenceGenerator;
 
     public DocumentModelListener(@Autowired DocumentSequenceGenerator sequenceGeerator) {
         this.documentSequenceGenerator = sequenceGeerator;

@@ -80,9 +80,8 @@ public class MainView extends AppLayout implements RouterLayout {
     private Button createUploadButton() {
         Button uploadButton = new Button("Upload");
         uploadButton.setIcon(VaadinIcon.UPLOAD.create());
-        uploadButton.addClickListener(event -> {
-            uploadButton.getUI().ifPresent(ui -> ui.navigate(FileUploadOverview.VIEW_NAME));
-        });
+        uploadButton.addClickListener(event -> uploadButton.getUI()
+                                                           .ifPresent(ui -> ui.navigate(FileUploadOverview.VIEW_NAME)));
         return uploadButton;
     }
 

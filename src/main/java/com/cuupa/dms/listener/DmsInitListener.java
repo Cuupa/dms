@@ -14,12 +14,12 @@ public class DmsInitListener implements VaadinServiceInitListener {
     public void serviceInit(ServiceInitEvent serviceInitEvent) {
         final AccessControl accessControl = AccessControlFactory.getInstance().createAccessControl();
 
-        serviceInitEvent.getSource().addUIInitListener(uiInitEvent -> {
-            uiInitEvent.getUI().addBeforeEnterListener(enterEvent -> {
-                if (!accessControl.isUserSingedIn() && !LoginScreen.class.equals(enterEvent.getNavigationTarget())) {
-                    enterEvent.rerouteTo(LoginScreen.class);
-                }
-            });
-        });
+        serviceInitEvent.getSource()
+                        .addUIInitListener(uiInitEvent -> uiInitEvent.getUI().addBeforeEnterListener(enterEvent -> {
+                            if (!accessControl.isUserSingedIn() &&
+                                !LoginScreen.class.equals(enterEvent.getNavigationTarget())) {
+                                enterEvent.rerouteTo(LoginScreen.class);
+                            }
+                        }));
     }
 }

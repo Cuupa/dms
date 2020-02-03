@@ -18,8 +18,6 @@ public class FileUploadOverview extends HorizontalLayout implements HasUrlParame
 
     public static final String VIEW_NAME = "Upload";
 
-    private final VerticalLayout layout = new VerticalLayout();
-
     public FileUploadOverview(@Autowired ExternSemanticService externSemanticService, @Autowired StorageService storageService) {
         final PreviewAndPropertiesLayout previewAndPropertiesLayout = new PreviewAndPropertiesLayout(storageService);
 
@@ -32,6 +30,7 @@ public class FileUploadOverview extends HorizontalLayout implements HasUrlParame
         upload.addAllFinishedListener(event -> previewAndPropertiesLayout.allFinishedEvent());
 
         upload.setMinWidth("100%");
+        VerticalLayout layout = new VerticalLayout();
         layout.add(upload);
         layout.add(previewAndPropertiesLayout);
         setSizeFull();

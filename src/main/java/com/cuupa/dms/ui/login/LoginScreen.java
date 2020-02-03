@@ -20,7 +20,7 @@ public class LoginScreen extends FlexLayout {
 
     private static final Log LOGGER = LogFactory.getLog(LoginScreen.class);
 
-    private AccessControl accessControl;
+    private final AccessControl accessControl;
 
     public LoginScreen() {
         accessControl = AccessControlFactory.getInstance().createAccessControl();

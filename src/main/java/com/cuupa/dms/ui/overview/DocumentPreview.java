@@ -26,7 +26,7 @@ public class DocumentPreview extends HorizontalLayout {
 
     private final DocumentPropertiesLayout propertiesLayout = new DocumentPropertiesLayout();
 
-    private List<Tag> tagsByOwner;
+    private final List<Tag> tagsByOwner;
 
     public DocumentPreview(DocumentGrid documentGrid, List<Tag> tagsByOwner) {
         this.documentGrid = documentGrid;
