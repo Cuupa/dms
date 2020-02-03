@@ -50,14 +50,11 @@ public class MainView extends AppLayout implements RouterLayout {
         Button uploadButton = createUploadButton();
         Button userButton = createUserButton();
         final HorizontalLayout buttonLayout = new HorizontalLayout();
-        buttonLayout.add(uploadButton);
-        buttonLayout.add(userButton);
-        buttonLayout.add(logoutButton);
+        buttonLayout.add(uploadButton, userButton, logoutButton);
         buttonLayout.setFlexGrow(1, uploadButton, userButton, logoutButton);
         final HorizontalLayout top = createMenuHeader();
         Label title = createTitle();
-        top.add(title);
-        top.add(buttonLayout);
+        top.add(title, buttonLayout);
         top.setFlexGrow(1, title);
         top.setMinWidth("95%");
 

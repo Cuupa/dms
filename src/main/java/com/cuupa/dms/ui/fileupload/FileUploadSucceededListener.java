@@ -2,6 +2,7 @@ package com.cuupa.dms.ui.fileupload;
 
 import com.cuupa.dms.service.extern.ExternSemanticService;
 import com.cuupa.dms.service.extern.SemanticResult;
+import com.cuupa.dms.ui.documentviews.PdfView;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.upload.SucceededEvent;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
@@ -25,10 +26,13 @@ public class FileUploadSucceededListener implements ComponentEventListener<Succe
 
     private final MultiFileMemoryBuffer buffer;
 
-    public FileUploadSucceededListener(final ExternSemanticService externSemanticService, final List<FileUploadProperties> properties, final MultiFileMemoryBuffer buffer) {
+    private final List<PdfView> preview;
+
+    public FileUploadSucceededListener(final ExternSemanticService externSemanticService, final MultiFileMemoryBuffer buffer, final List<FileUploadProperties> properties, final List<PdfView> preview) {
         this.externSemanticService = externSemanticService;
         this.properties = properties;
         this.buffer = buffer;
+        this.preview = preview;
     }
 
     @Override
@@ -55,7 +59,8 @@ public class FileUploadSucceededListener implements ComponentEventListener<Succe
             fileUploadProperties.setTags(collect);
         }
 
-        fileUploadProperties.setPdf(new StreamResource(event.getFileName(), () -> {
+        fileUploadProperties.setContent(getBytes(buffer, event));
+        PdfView pdfView = new PdfView(new StreamResource(event.getFileName(), () -> {
             try {
                 return new ByteArrayInputStream((buffer.getInputStream(event.getFileName()).readAllBytes()));
             } catch (IOException e) {
@@ -64,8 +69,7 @@ public class FileUploadSucceededListener implements ComponentEventListener<Succe
             return null;
         }));
 
-        fileUploadProperties.setContent(getBytes(buffer, event));
-
+        preview.add(pdfView);
         properties.add(fileUploadProperties);
     }
 

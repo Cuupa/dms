@@ -50,16 +50,13 @@ public class DocumentsOverview extends HorizontalLayout implements HasUrlParamet
         filter = new TextField();
         filter.setWidth("100%");
         filter.setPlaceholder(Constants.FILTER_TEXT);
-        filter.addValueChangeListener(event -> {
-            dataProvider.setFilter(event.getValue());
-        });
+        filter.addValueChangeListener(event -> dataProvider.setFilter(event.getValue()));
 
         horizontalLayout = new HorizontalLayout();
-        horizontalLayout.add(documentGrid);
+        horizontalLayout.add(documentGrid, documentPreview);
         horizontalLayout.setFlexGrow(1, documentGrid);
         horizontalLayout.setFlexGrow(0, documentPreview);
         horizontalLayout.setSizeFull();
-        horizontalLayout.add(documentPreview);
 
         final VerticalLayout barAndGridLayout = new VerticalLayout();
         barAndGridLayout.add(filter);

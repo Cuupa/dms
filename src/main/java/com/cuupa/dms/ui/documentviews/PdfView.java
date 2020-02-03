@@ -11,19 +11,26 @@ import java.io.InputStream;
 
 public class PdfView extends VerticalLayout {
 
-
     public PdfView(final Document document) {
-        PdfElement view = new PdfElement("object");
         StreamResource
                 streamResource =
                 new StreamResource(document.getName(), () -> getInputStream(document.getFilename()));
-        view.setAttribute("data", streamResource);
-        getElement().appendChild(view);
-        setSizeFull();
+        init(streamResource);
     }
 
     public PdfView() {
 
+    }
+
+    public PdfView(final StreamResource streamResource) {
+        init(streamResource);
+    }
+
+    private void init(StreamResource streamResource) {
+        PdfElement view = new PdfElement("object");
+        view.setAttribute("data", streamResource);
+        getElement().appendChild(view);
+        setSizeFull();
     }
 
     private InputStream getInputStream(final String filename) {

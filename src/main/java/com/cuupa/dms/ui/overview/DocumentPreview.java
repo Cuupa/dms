@@ -33,14 +33,13 @@ public class DocumentPreview extends HorizontalLayout {
         this.tagsByOwner = tagsByOwner;
         setSizeFull();
 
-        final Tabs tabs = createTabs();
         final VerticalLayout verticalLayout = new VerticalLayout();
         previewLayout.add(lastView);
-        verticalLayout.add(tabs);
         previewLayout.setSizeFull();
+        propertiesLayout.setVisible(false);
+        verticalLayout.add(createTabs());
         verticalLayout.add(previewLayout);
         verticalLayout.add(propertiesLayout);
-        propertiesLayout.setVisible(false);
         add(verticalLayout);
     }
 

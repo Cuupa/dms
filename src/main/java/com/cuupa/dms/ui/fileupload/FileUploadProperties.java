@@ -5,7 +5,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.timepicker.TimePicker;
-import com.vaadin.flow.server.StreamResource;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -26,7 +25,6 @@ public class FileUploadProperties extends VerticalLayout {
 
     private byte[] content = new byte[0];
 
-    private EmbeddedPdfDocument pdf = new EmbeddedPdfDocument();
 
     public FileUploadProperties() {
         filename.setMinWidth("100%");
@@ -34,15 +32,11 @@ public class FileUploadProperties extends VerticalLayout {
         date.setMinWidth("50%");
         time.setMinWidth("50%");
         tags.setMinWidth("100%");
-        pdf.setMinWidth("100%");
-        add(filename);
-        add(from);
+        add(filename, from);
         final HorizontalLayout horizontalLayout = new HorizontalLayout();
-        horizontalLayout.add(date);
-        horizontalLayout.add(time);
-        add(horizontalLayout);
-        add(tags);
-        add(pdf);
+        horizontalLayout.setWidth("100%");
+        horizontalLayout.add(date, time);
+        add(horizontalLayout, tags);
         setSizeFull();
     }
 
@@ -84,11 +78,6 @@ public class FileUploadProperties extends VerticalLayout {
 
     public void setTags(List<String> tags) {
         this.tags.setValue(String.join(",", tags));
-    }
-
-    public void setPdf(StreamResource resource) {
-        pdf = new EmbeddedPdfDocument(resource);
-        pdf.setHeight("50%");
     }
 
     public byte[] getContent() {

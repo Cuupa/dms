@@ -23,8 +23,6 @@ public class DocumentPropertiesLayout extends VerticalLayout {
 
     private final MultiSelectListBox<Tag> tags = new MultiSelectListBox<>();
 
-    private Document document;
-
     public DocumentPropertiesLayout() {
         setSizeFull();
         setMinWidth("100%");
@@ -64,14 +62,10 @@ public class DocumentPropertiesLayout extends VerticalLayout {
         layoutTags.add(tags);
         layoutTags.setJustifyContentMode(JustifyContentMode.START);
 
-        add(layoutFilename);
-        add(layoutSender);
-        add(layoutDate);
-        add(layoutTags);
+        add(layoutFilename, layoutSender, layoutDate, layoutTags);
     }
 
     public void setDocument(final Document document, List<Tag> tags) {
-        this.document = document;
         this.filename.setValue(document.getName());
         this.sender.setValue(document.getSender());
         this.date.setValue(document.getCreateDate().toLocalDate());
