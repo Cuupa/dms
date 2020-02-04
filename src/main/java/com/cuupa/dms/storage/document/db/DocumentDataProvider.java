@@ -17,12 +17,6 @@ public class DocumentDataProvider extends ListDataProvider<Document> {
         super(storageService.findDocumentsByOwner(username));
     }
 
-    @Override
-    public Long getId(final Document document) {
-        Objects.requireNonNull(document, "Cannot provide an id for a null product.");
-        return document.getId();
-    }
-
     public void setFilter(final String filtertext) {
         Objects.requireNonNull(filtertext, "Must not be null");
         if (Objects.equals(this.filtertext, filtertext.trim())) {

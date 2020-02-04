@@ -1,18 +1,9 @@
 package com.cuupa.dms.storage.document.db;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class Document {
-
-    @Transient
-    public static final String SEQUENCE_NAME = "documents_sequence";
-
-    @Id
-    private long id;
+public class DBDocument {
 
     private String owner;
 
@@ -22,28 +13,17 @@ public class Document {
 
     private LocalDateTime createDate;
 
-    private List<Long> tags;
-
-    private String image;
+    private List<String> tags;
 
     private String filename;
 
-    public Document(long id, String filename, String name, String sender, String owner, LocalDateTime createDate, List<Long> tags) {
-        this.id = id;
+    public DBDocument(String filename, String name, String sender, String owner, LocalDateTime createDate, List<String> tags) {
         this.filename = filename;
         this.name = name;
         this.sender = sender;
         this.owner = owner;
         this.createDate = createDate;
         this.tags = tags;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getOwner() {
@@ -70,20 +50,12 @@ public class Document {
         this.createDate = createDate;
     }
 
-    public List<Long> getTags() {
+    public List<String> getTags() {
         return tags;
     }
 
-    public void setTags(List<Long> tags) {
+    public void setTags(List<String> tags) {
         this.tags = tags;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 
     public String getFilename() {

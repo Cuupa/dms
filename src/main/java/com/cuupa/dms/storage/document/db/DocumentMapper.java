@@ -1,42 +1,36 @@
 package com.cuupa.dms.storage.document.db;
 
+import com.cuupa.dms.storage.document.Document;
 import com.cuupa.dms.storage.tag.Tag;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class DocumentMapper {
 
-    public static Document mapToEntity(com.cuupa.dms.storage.document.Document document) {
-        Document
+    public static DBDocument mapToEntity(Document document) {
+        DBDocument
                 documentEntity =
-                new Document(document.getId(),
-                             document.getFilename(),
-                             document.getName(),
-                             document.getSender(),
-                             document.getOwner(),
-                             document.getCreateDate(),
-                             new ArrayList<>());
-        documentEntity.setImage(document.getImage());
+                new DBDocument(document.getFilename(),
+                               document.getName(),
+                               document.getSender(),
+                               document.getOwner(),
+                               document.getCreateDate(),
+                               document.getTags().stream().map(Tag::getName).collect(Collectors.toList()));
         return documentEntity;
     }
 
-    public static com.cuupa.dms.storage.document.Document mapToGuiObject(Document document, List<Tag> tags) {
-        com.cuupa.dms.storage.document.Document
+    public static Document mapToGuiObject(DBDocument document) {
+        Document
                 uiDocument =
-                new com.cuupa.dms.storage.document.Document(document.getId(),
-                                                            document.getFilename(),
+                new com.cuupa.dms.storage.document.Document(document.getFilename(),
                                                             document.getName(),
                                                             document.getSender(),
                                                             document.getOwner(),
                                                             document.getCreateDate(),
-                                                            tags.stream()
-                                                                .map(tag -> new Tag(tag.getId(),
-                                                                                    tag.getName(),
-                                                                                    tag.getOwner()))
-                                                                .collect(Collectors.toList()));
-        uiDocument.setImage(document.getImage());
+                                                            document.getTags()
+                                                                    .stream()
+                                                                    .map(tag -> new Tag(tag, document.getOwner()))
+                                                                    .collect(Collectors.toList()));
         return uiDocument;
     }
 }

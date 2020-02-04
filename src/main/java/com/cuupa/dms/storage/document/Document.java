@@ -8,8 +8,6 @@ import java.util.List;
 
 public class Document {
 
-    private long id;
-
     private String owner;
 
     private String name;
@@ -20,26 +18,15 @@ public class Document {
 
     private List<Tag> tags;
 
-    private String image;
-
     private String filename;
 
-    public Document(long id, String filename, String name, String sender, String owner, LocalDateTime createDate, List<Tag> tags) {
-        this.id = id;
+    public Document(String filename, String name, String sender, String owner, LocalDateTime createDate, List<Tag> tags) {
         this.filename = filename;
         this.name = name;
         this.sender = sender;
         this.owner = owner;
         this.createDate = createDate;
         this.tags = tags;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getOwner() {
@@ -72,14 +59,6 @@ public class Document {
 
     public void setTags(List<Tag> tags) {
         this.tags = tags;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 
     public String getFilename() {

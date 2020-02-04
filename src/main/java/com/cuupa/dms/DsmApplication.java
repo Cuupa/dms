@@ -26,34 +26,28 @@ public class DsmApplication {
         storage.deleteAll();
         Document
                 document =
-                new Document(0L,
-                             "",
+                new Document("",
                              "filename.pdf",
                              "company 1",
                              "user",
                              LocalDateTime.now(),
                              Arrays.asList(new Tag("Bill"), new Tag("Invoice")));
-        document.setImage("1.png");
         Document
                 document2 =
-                new Document(0L,
-                             "",
+                new Document("",
                              "filename2.pdf",
                              "company 2",
                              "user",
                              LocalDateTime.now(),
                              Arrays.asList(new Tag("Bill"), new Tag("Invoice")));
-        document2.setImage("1.png");
         Document
                 document3 =
-                new Document(0L,
-                             "",
+                new Document("",
                              "filename3.pdf",
                              "company 2",
                              "a",
                              LocalDateTime.now(),
                              Arrays.asList(new Tag("Bill"), new Tag("Invoice")));
-        document3.setImage("1.png");
         storage.save(document);
         storage.save(document2);
         storage.save(document3);

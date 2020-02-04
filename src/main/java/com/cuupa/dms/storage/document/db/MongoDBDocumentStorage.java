@@ -4,7 +4,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-public interface MongoDBDocumentStorage extends MongoRepository<Document, Long> {
+public interface MongoDBDocumentStorage extends MongoRepository<DBDocument, Long> {
 
-    List<Document> findDocumentsByOwner(String owner);
+    List<DBDocument> findDocumentsByOwner(String owner);
 }

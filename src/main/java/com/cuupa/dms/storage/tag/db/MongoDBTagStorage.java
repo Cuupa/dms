@@ -4,11 +4,11 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 
-public interface MongoDBTagStorage extends MongoRepository<com.cuupa.dms.storage.tag.Tag, Long> {
+public interface MongoDBTagStorage extends MongoRepository<DBTag, Long> {
 
-    List<com.cuupa.dms.storage.tag.Tag> findTagsByOwner(String owner);
+    List<DBTag> findTagsByOwner(String owner);
 
-    Tag findTagById(long id);
+    //DBTag findTagById(long id);
 
-    Tag findTagByNameAndOwner(String name, String owner);
+    DBTag findTagByNameAndOwner(String name, String owner);
 }

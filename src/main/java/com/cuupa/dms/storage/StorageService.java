@@ -1,9 +1,11 @@
 package com.cuupa.dms.storage;
 
 import com.cuupa.dms.storage.document.Document;
+import com.cuupa.dms.storage.document.db.DBDocument;
 import com.cuupa.dms.storage.document.db.DocumentMapper;
 import com.cuupa.dms.storage.document.db.MongoDBDocumentStorage;
 import com.cuupa.dms.storage.tag.Tag;
+import com.cuupa.dms.storage.tag.db.DBTag;
 import com.cuupa.dms.storage.tag.db.MongoDBTagStorage;
 import org.apache.commons.lang3.StringUtils;
 
@@ -30,36 +32,28 @@ public class StorageService {
 
     public void save(Document document) {
         List<Tag> tags = document.getTags();
-        document.setOwner(document.getOwner().trim());
         tags.forEach(tag -> tag.setOwner(document.getOwner()));
         tags.forEach(tag -> tag.setName(tag.getName().trim()));
-        List<Tag> tagsInDB = getTagsFromDB(tags);
+        List<DBTag> tagsInDB = getTagsFromDB(tags);
 
         saveNewTags(tags, tagsInDB);
         tagsInDB = getTagsFromDB(tags);
-        com.cuupa.dms.storage.document.db.Document documentToSave = DocumentMapper.mapToEntity(document);
+        System.out.println(tagsInDB);
+        document.setTags(tags);
+        DBDocument documentToSave = DocumentMapper.mapToEntity(document);
 
-        setTagsToDocument(tags, tagsInDB, documentToSave);
-        documentStorage.save(documentToSave);
+        documentStorage.insert(documentToSave);
     }
 
-    private List<Tag> getTagsFromDB(List<Tag> tags) {
+    private List<DBTag> getTagsFromDB(List<Tag> tags) {
         return tags.stream()
-                   .filter(tag -> tagStorage.findTagByNameAndOwner(tag.getName(), tag.getOwner()) != null)
+                   .map(tag -> tagStorage.findTagByNameAndOwner(tag.getName(), tag.getOwner()))
+                   .filter(Objects::nonNull)
                    .collect(Collectors.toList());
     }
 
-    private void setTagsToDocument(List<Tag> tags, List<Tag> tagsInDB, com.cuupa.dms.storage.document.db.Document documentToSave) {
-        for (Tag tag : tags) {
-            for (Tag tagFromDB : tagsInDB) {
-                if (tag.equals(tagFromDB)) {
-                    documentToSave.getTags().add(tagFromDB.getId());
-                }
-            }
-        }
-    }
 
-    private void saveNewTags(List<Tag> tags, List<Tag> tagsInDB) {
+    private void saveNewTags(List<Tag> tags, List<DBTag> tagsInDB) {
         List<Tag>
                 filteredTags =
                 tags.stream()
@@ -73,42 +67,32 @@ public class StorageService {
                                             .contains(tag.getOwner()))
                     .collect(Collectors.toList());
 
-        filteredTags.forEach(tagStorage::save);
+
+        List<DBTag>
+                collect =
+                filteredTags.stream().map(tag -> new DBTag(tag.getName(), tag.getOwner())).collect(Collectors.toList());
+        for (DBTag tag : collect) {
+            tagStorage.insert(tag);
+        }
     }
 
     public List<Document> findDocumentsByOwner(String owner) {
         if (StringUtils.isBlank(owner)) {
             return new ArrayList<>();
         }
-        List<com.cuupa.dms.storage.document.db.Document> documentsByOwner = documentStorage.findDocumentsByOwner(owner);
-        List<Long>
-                tagIds =
-                documentsByOwner.stream().flatMap(document -> document.getTags().stream()).collect(Collectors.toList());
-
-        List<Tag>
-                tagList =
-                tagIds.stream()
-                      .map(tagStorage::findTagById)
-                      .filter(Objects::nonNull)
-                      .map(tagFromDB -> new Tag(tagFromDB.get_id(), tagFromDB.getName(), tagFromDB.getOwner()))
-                      .collect(Collectors.toList());
+        List<DBDocument> documentsByOwner = documentStorage.findDocumentsByOwner(owner);
 
         List<Document> documents = new ArrayList<>(documentsByOwner.size());
 
-        for (com.cuupa.dms.storage.document.db.Document document : documentsByOwner) {
-            List<Long> tags = document.getTags();
-
-            List<Tag> collect = tagList.stream().filter(tag -> tags.contains(tag.getId())).collect(Collectors.toList());
-            documents.add(DocumentMapper.mapToGuiObject(document, collect));
+        for (DBDocument document : documentsByOwner) {
+            documents.add(DocumentMapper.mapToGuiObject(document));
         }
 
         return documents;
     }
 
     public List<Tag> findTagsByOwner(String owner) {
-        return tagStorage.findTagsByOwner(owner)
-                         .stream()
-                         .map(tag -> new Tag(tag.getId(), tag.getName(), tag.getOwner()))
+        return tagStorage.findTagsByOwner(owner).stream().map(tag -> new Tag(tag.getName(), tag.getOwner()))
                          .collect(Collectors.toList());
     }
 }

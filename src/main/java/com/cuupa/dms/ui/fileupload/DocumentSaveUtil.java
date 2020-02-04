@@ -34,10 +34,9 @@ public class DocumentSaveUtil {
     }
 
     private void writeDatabase(Path path) {
-        storageService.save(new Document(0L,
-                                         path.toString(),
-                                         properties.getFilename(),
-                                         properties.getFrom(),
+        storageService.save(new Document(path.toString(),
+                                         properties.getFilename().trim(),
+                                         properties.getFrom().trim(),
                                          AccessControlFactory.getInstance().createAccessControl().getPrincipalName(),
                                          LocalDateTime.of(properties.getDate(), properties.getTime()),
                                          properties.getTags().stream().map(Tag::new).collect(Collectors.toList())));

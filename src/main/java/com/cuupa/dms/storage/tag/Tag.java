@@ -1,8 +1,8 @@
 package com.cuupa.dms.storage.tag;
 
-public class Tag implements Comparable<Tag> {
+import com.cuupa.dms.storage.tag.db.DBTag;
 
-    private long id;
+public class Tag implements Comparable<Tag> {
 
     private String name;
 
@@ -12,21 +12,12 @@ public class Tag implements Comparable<Tag> {
         this.name = name;
     }
 
-    public Tag(long id, String name, String owner) {
-        this.id = id;
+    public Tag(String name, String owner) {
         this.name = name;
         this.owner = owner;
     }
 
     public Tag() {
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -70,6 +61,11 @@ public class Tag implements Comparable<Tag> {
     public boolean equals(Object obj) {
         if (obj instanceof Tag) {
             Tag other = (Tag) obj;
+            return other.getName().equals(this.name);
+        }
+
+        if (obj instanceof DBTag) {
+            DBTag other = (DBTag) obj;
             return other.getName().equals(this.name);
         }
         return false;
