@@ -1,6 +1,8 @@
 package com.cuupa.dms.ui;
 
 import com.cuupa.dms.authentication.AccessControlFactory;
+import com.cuupa.dms.storage.StorageService;
+import com.cuupa.dms.storage.tag.Tag;
 import com.cuupa.dms.ui.fileupload.FileUploadOverview;
 import com.cuupa.dms.ui.overview.DocumentsOverview;
 import com.vaadin.flow.component.AttachEvent;
@@ -13,14 +15,17 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.PWA;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * A sample Vaadin view class.
@@ -42,7 +47,7 @@ public class MainView extends AppLayout implements RouterLayout {
 
     public static final String TITLE = "Documents";
 
-    public MainView() {
+    public MainView(@Autowired final StorageService storageService) {
 
         createMenuToggle();
 
@@ -66,9 +71,33 @@ public class MainView extends AppLayout implements RouterLayout {
         menuLayout.add(createMenuLink(DocumentsOverview.class,
                                       DocumentsOverview.VIEW_NAME,
                                       VaadinIcon.ARCHIVES.create()));
-        addToDrawer(menuLayout);
 
-        //add(textField, button);
+
+        final HorizontalLayout tagMenuSearch = new HorizontalLayout();
+        final MultiSelectListBox<Tag> tagBox = new MultiSelectListBox<>();
+        tagBox.add("Headline");
+        tagBox.setItems(storageService.findTagsByOwner(AccessControlFactory.getInstance()
+                                                                           .createAccessControl()
+                                                                           .getPrincipalName()));
+        tagBox.addSelectionListener(event -> {
+            VaadinSession.getCurrent().setAttribute("tag_filter", event.getAllSelectedItems());
+
+        });
+
+
+        //getUI().get()
+        //       .navigate(DocumentsOverview.VIEW_NAME,
+        //                 QueryParameters.full(new"tag_filter", objectObjectHashMap));
+        tagMenuSearch.setAlignItems(FlexComponent.Alignment.CENTER);
+        tagMenuSearch.setVerticalComponentAlignment(FlexComponent.Alignment.END, tagBox);
+        tagMenuSearch.setHeight("80%");
+        tagMenuSearch.setWidth("100%");
+
+        tagBox.setWidth("100%");
+        tagMenuSearch.add(tagBox);
+
+        addToDrawer(menuLayout);
+        addToDrawer(tagMenuSearch);
     }
 
     private Button createUserButton() {

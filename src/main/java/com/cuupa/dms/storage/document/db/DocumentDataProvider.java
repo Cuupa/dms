@@ -2,11 +2,11 @@ package com.cuupa.dms.storage.document.db;
 
 import com.cuupa.dms.storage.StorageService;
 import com.cuupa.dms.storage.document.Document;
-import com.cuupa.dms.storage.tag.Tag;
 import com.vaadin.flow.data.provider.ListDataProvider;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DocumentDataProvider extends ListDataProvider<Document> {
@@ -19,15 +19,33 @@ public class DocumentDataProvider extends ListDataProvider<Document> {
 
     public void setFilter(final String filtertext) {
         Objects.requireNonNull(filtertext, "Must not be null");
-        if (Objects.equals(this.filtertext, filtertext.trim())) {
+        final String finalFiltertext = filtertext.trim().toLowerCase();
+        if (Objects.equals(this.filtertext, finalFiltertext)) {
             return;
         }
 
-        this.filtertext = filtertext.trim();
+        this.filtertext = finalFiltertext;
         setFilter(document -> passesFilter(document.getName(), filtertext) ||
-                              passesFilter(document.getTags().stream().map(Tag::getName).collect(Collectors.toList()),
-                                           filtertext) ||
+                              passesFilter(document.getTags()
+                                                   .stream()
+                                                   .map(tag -> tag.getName().toLowerCase())
+                                                   .collect(Collectors.toList()), filtertext) ||
                               passesFilter(document.getSender(), filtertext));
+    }
+
+    public void setFilter(final Set<String> filter) {
+        if (filter != null) {
+
+            setFilter(document -> passesFilter(document.getTags()
+                                                       .stream()
+                                                       .map(tag -> tag.getName().toLowerCase())
+                                                       .collect(Collectors.toList()), filter));
+        }
+    }
+
+
+    private boolean passesFilter(final List<String> tags, Set<String> filter) {
+        return tags != null && !filter.isEmpty() && filter.stream().anyMatch(tags::contains);
     }
 
     private boolean passesFilter(final String name, final String filtertext) {

@@ -80,19 +80,16 @@ public class StorageService {
         if (StringUtils.isBlank(owner)) {
             return new ArrayList<>();
         }
-        List<DBDocument> documentsByOwner = documentStorage.findDocumentsByOwner(owner);
-
-        List<Document> documents = new ArrayList<>(documentsByOwner.size());
-
-        for (DBDocument document : documentsByOwner) {
-            documents.add(DocumentMapper.mapToGuiObject(document));
-        }
-
-        return documents;
+        return documentStorage.findDocumentsByOwner(owner)
+                              .stream()
+                              .map(DocumentMapper::mapToGuiObject)
+                              .collect(Collectors.toList());
     }
 
     public List<Tag> findTagsByOwner(String owner) {
-        return tagStorage.findTagsByOwner(owner).stream().map(tag -> new Tag(tag.getName(), tag.getOwner()))
+        return tagStorage.findTagsByOwner(owner)
+                         .stream()
+                         .map(tag -> new Tag(tag.getName(), tag.getOwner()))
                          .collect(Collectors.toList());
     }
 }

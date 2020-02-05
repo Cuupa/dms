@@ -5,14 +5,21 @@ import com.cuupa.dms.authentication.AccessControlFactory;
 import com.cuupa.dms.storage.StorageService;
 import com.cuupa.dms.storage.document.Document;
 import com.cuupa.dms.storage.document.db.DocumentDataProvider;
+import com.cuupa.dms.storage.tag.Tag;
 import com.cuupa.dms.ui.MainView;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.router.*;
+import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Route(value = "Documents", layout = MainView.class)
@@ -29,6 +36,7 @@ public class DocumentsOverview extends HorizontalLayout implements HasUrlParamet
 
     public DocumentsOverview(@Autowired StorageService storageService) {
         setSizeFull();
+
         dataProvider =
                 new DocumentDataProvider(storageService,
                                          AccessControlFactory.getInstance().createAccessControl().getPrincipalName());
@@ -55,9 +63,17 @@ public class DocumentsOverview extends HorizontalLayout implements HasUrlParamet
         horizontalLayout.setSizeFull();
 
         final VerticalLayout barAndGridLayout = new VerticalLayout();
-        barAndGridLayout.add(filter);
-        barAndGridLayout.setFlexGrow(1, filter);
-        barAndGridLayout.expand(filter);
+        final HorizontalLayout searchLayout = new HorizontalLayout();
+        searchLayout.setWidth("100%");
+        Button searchButton = new Button("Search", VaadinIcon.SEARCH.create());
+        searchButton.addClickListener(event -> dataProvider.setFilter(filter.getValue()));
+        searchButton.setWidth("10%");
+        searchLayout.add(filter);
+        //searchLayout.expand(filter);
+        searchLayout.add(searchButton);
+        filter.setClearButtonVisible(true);
+
+        barAndGridLayout.add(searchLayout);
 
         barAndGridLayout.add(horizontalLayout);
         add(barAndGridLayout);
@@ -77,8 +93,13 @@ public class DocumentsOverview extends HorizontalLayout implements HasUrlParamet
         };
     }
 
+
     @Override
     public void setParameter(BeforeEvent event, @OptionalParameter String parameter) {
-        //viewLogic.enter(parameter);
+        final Object filter = VaadinSession.getCurrent().getAttribute("tag_filter");
+        if (filter != null) {
+            Set<Tag> filterSet = (Set) filter;
+            dataProvider.setFilter(filterSet.stream().map(Tag::getName).collect(Collectors.toSet()));
+        }
     }
 }
