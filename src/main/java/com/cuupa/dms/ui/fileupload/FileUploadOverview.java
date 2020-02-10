@@ -13,10 +13,10 @@ import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Route(value = "Upload", layout = MainView.class)
+@Route(value = "upload", layout = MainView.class)
 public class FileUploadOverview extends HorizontalLayout implements HasUrlParameter<String> {
 
-    public static final String VIEW_NAME = "Upload";
+    public static final String VIEW_NAME = "upload";
 
     public FileUploadOverview(@Autowired ExternSemanticService externSemanticService, @Autowired StorageService storageService) {
         final PreviewAndPropertiesLayout previewAndPropertiesLayout = new PreviewAndPropertiesLayout(storageService);

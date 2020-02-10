@@ -36,7 +36,8 @@ public class PreviewAndPropertiesLayout extends VerticalLayout {
 
     public PreviewAndPropertiesLayout(@Autowired StorageService storageService) {
         initButtons(storageService);
-
+        lastPreviewLayout.setVisible(false);
+        lastPropertiesLayout.setVisible(false);
         setMinWidth("90%");
         setHeight("90%");
         contentLayout.add(lastPreviewLayout, lastPropertiesLayout);
@@ -123,6 +124,7 @@ public class PreviewAndPropertiesLayout extends VerticalLayout {
         nextButton.addClickListener(event -> incrementIndex());
 
         save.setEnabled(false);
+        save.setThemeName("primary");
         save.addClickListener(event -> {
 
             for (FileUploadProperties property : properties) {
