@@ -5,7 +5,6 @@ import com.cuupa.dms.authentication.AccessControlFactory;
 import com.cuupa.dms.storage.StorageService;
 import com.cuupa.dms.storage.document.Document;
 import com.cuupa.dms.storage.document.db.DocumentDataProvider;
-import com.cuupa.dms.storage.tag.Tag;
 import com.cuupa.dms.ui.MainView;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -15,18 +14,14 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.router.*;
-import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Set;
-import java.util.stream.Collectors;
 
-
-@Route(value = "Documents", layout = MainView.class)
+@Route(value = "documents", layout = MainView.class)
 @RouteAlias(value = "", layout = MainView.class)
 public class DocumentsOverview extends HorizontalLayout implements HasUrlParameter<String> {
 
-    public static final String VIEW_NAME = "Documents";
+    public static final String VIEW_NAME = " Documents";
 
     private final DocumentPreview documentPreview;
 
@@ -66,6 +61,7 @@ public class DocumentsOverview extends HorizontalLayout implements HasUrlParamet
         final HorizontalLayout searchLayout = new HorizontalLayout();
         searchLayout.setWidth("100%");
         Button searchButton = new Button("Search", VaadinIcon.SEARCH.create());
+        searchButton.setThemeName("primary");
         searchButton.addClickListener(event -> dataProvider.setFilter(filter.getValue()));
         searchButton.setWidth("10%");
         searchLayout.add(filter);
@@ -96,10 +92,6 @@ public class DocumentsOverview extends HorizontalLayout implements HasUrlParamet
 
     @Override
     public void setParameter(BeforeEvent event, @OptionalParameter String parameter) {
-        final Object filter = VaadinSession.getCurrent().getAttribute("tag_filter");
-        if (filter != null) {
-            Set<Tag> filterSet = (Set) filter;
-            dataProvider.setFilter(filterSet.stream().map(Tag::getName).collect(Collectors.toSet()));
-        }
+
     }
 }

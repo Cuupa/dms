@@ -6,13 +6,13 @@ import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
 
-@Route(value = "inbox", layout = MainView.class)
-public class Inbox extends HorizontalLayout implements HasUrlParameter<String> {
+@Route(value = "adresses", layout = MainView.class)
+public class AdressesOverview extends HorizontalLayout implements HasUrlParameter<String> {
 
-    public static final String VIEW_NAME = " Inbox";
+    public static final String VIEW_NAME = " Adresses";
 
     @Override
     public void setParameter(BeforeEvent event, @OptionalParameter String parameter) {
-        //viewLogic.enter(parameter);
+
     }
 }

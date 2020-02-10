@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class DocumentSaveUtil {
@@ -51,14 +52,35 @@ public class DocumentSaveUtil {
                               AccessControlFactory.getInstance().createAccessControl().getPrincipalName() +
                               File.separator +
                               properties.getFilename());
-            path.getParent().toFile().mkdirs();
-            if (!Files.exists(path)) {
-                Files.write(path, properties.getContent(), StandardOpenOption.CREATE_NEW);
+            if (!path.toFile().exists()) {
+                path.toFile().mkdirs();
             }
-            return path;
+            Path finalPath = findFinalFilepath(path);
+            System.out.println(finalPath);
+            Files.write(finalPath, properties.getContent(), StandardOpenOption.CREATE_NEW);
+            return finalPath;
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private Path findFinalFilepath(Path path) {
+        try {
+            final List<Path> list = Files.list(path).collect(Collectors.toList());
+            int maxFoundFilename = 0;
+            for (Path foundPath : list) {
+                final String foundFilename = foundPath.getFileName().toString().split("\\.")[0];
+                final int currentFilename = Integer.parseInt(foundFilename);
+                if (currentFilename > maxFoundFilename) {
+                    maxFoundFilename = currentFilename;
+                }
+            }
+            System.out.println(list);
+            return new File(path.toFile().getAbsolutePath(), ++maxFoundFilename + ".pdf").toPath();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new File(path.toFile().getAbsolutePath(), "1.pdf").toPath();
     }
 }
