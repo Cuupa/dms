@@ -43,6 +43,7 @@
           <element id="library" level="project" name="Maven: org.springframework:spring-expression:5.2.3.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.data:spring-data-commons:2.2.4.RELEASE" />
           <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.30" />
+          <element id="library" level="project" name="Maven: org.mariadb.jdbc:mariadb-java-client:2.5.4" />
           <element id="library" level="project" name="Maven: com.vaadin:vaadin:14.1.5" />
           <element id="library" level="project" name="Maven: com.vaadin:vaadin-core:14.1.5" />
           <element id="library" level="project" name="Maven: com.vaadin:flow-server:2.1.3" />

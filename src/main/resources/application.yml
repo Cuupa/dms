@@ -17,3 +17,12 @@ spring:
     multipart:
       max-file-size: 10GB
       max-request-size: 10GB
+
+  datasource:
+    url: jdbc:mariadb://localhost:3306/dmsusers
+    username: dmsuser
+    password: dmspassword
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
