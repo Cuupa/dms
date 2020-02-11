@@ -1,5 +1,6 @@
 package com.cuupa.dms.ui.fileupload;
 
+import com.cuupa.dms.authentication.AccessControl;
 import com.cuupa.dms.storage.StorageService;
 import com.cuupa.dms.ui.documentviews.PdfView;
 import com.cuupa.dms.ui.overview.DocumentsOverview;
@@ -34,8 +35,8 @@ public class PreviewAndPropertiesLayout extends VerticalLayout {
 
     private int index = 0;
 
-    public PreviewAndPropertiesLayout(@Autowired StorageService storageService) {
-        initButtons(storageService);
+    public PreviewAndPropertiesLayout(@Autowired StorageService storageService, @Autowired AccessControl accessControl) {
+        initButtons(storageService, accessControl);
         lastPreviewLayout.setVisible(false);
         lastPropertiesLayout.setVisible(false);
         setMinWidth("90%");
@@ -111,7 +112,7 @@ public class PreviewAndPropertiesLayout extends VerticalLayout {
 
     }
 
-    private void initButtons(StorageService storageService) {
+    private void initButtons(StorageService storageService, AccessControl accessControl) {
         previousButton.setMinWidth("10%");
         nextButton.setMinWidth("10%");
 
@@ -128,7 +129,7 @@ public class PreviewAndPropertiesLayout extends VerticalLayout {
         save.addClickListener(event -> {
 
             for (FileUploadProperties property : properties) {
-                new DocumentSaveUtil(property, storageService).save();
+                new DocumentSaveUtil(property, storageService, accessControl.getPrincipalName()).save();
             }
             save.getUI().ifPresent(ui -> ui.navigate(DocumentsOverview.VIEW_NAME));
         });

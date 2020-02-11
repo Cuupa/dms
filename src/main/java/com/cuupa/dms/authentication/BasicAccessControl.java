@@ -17,7 +17,7 @@ public class BasicAccessControl implements AccessControl {
             return false;
         }
 
-        CurrentUser.set(username);
+        CurrentUser.set(new User(username, username, username));
         return true;
     }
 
@@ -33,12 +33,17 @@ public class BasicAccessControl implements AccessControl {
 
     @Override
     public String getPrincipalName() {
-        return CurrentUser.get();
+        return CurrentUser.get().getUsername();
     }
 
     @Override
     public void singOut() {
         VaadinSession.getCurrent().getSession().invalidate();
         UI.getCurrent().navigate("");
+    }
+
+    @Override
+    public boolean register(String username, String password, String salt, String firstname, String lastname) {
+        return true;
     }
 }

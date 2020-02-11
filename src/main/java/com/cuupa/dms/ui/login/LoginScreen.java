@@ -1,7 +1,7 @@
 package com.cuupa.dms.ui.login;
 
 import com.cuupa.dms.authentication.AccessControl;
-import com.cuupa.dms.authentication.AccessControlFactory;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.login.AbstractLogin;
 import com.vaadin.flow.component.login.LoginForm;
@@ -11,9 +11,10 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
-@Route("Login")
+@Route("login")
 @PageTitle("Login")
 @CssImport("./styles/shared-styles.css")
 public class LoginScreen extends FlexLayout {
@@ -22,12 +23,12 @@ public class LoginScreen extends FlexLayout {
 
     private final AccessControl accessControl;
 
-    public LoginScreen() {
-        accessControl = AccessControlFactory.getInstance().createAccessControl();
-        buildUI();
+    public LoginScreen(@Autowired AccessControl accessControl) {
+        this.accessControl = accessControl;
+        buildUI(accessControl);
     }
 
-    private void buildUI() {
+    private void buildUI(AccessControl accessControl) {
         setSizeFull();
         setClassName("login-screen");
 
@@ -40,7 +41,9 @@ public class LoginScreen extends FlexLayout {
         centeringLayout.setJustifyContentMode(JustifyContentMode.CENTER);
         centeringLayout.setAlignItems(Alignment.CENTER);
         centeringLayout.add(loginForm);
-
+        Button registerButton = new Button("Register");
+        registerButton.addClickListener(event -> getUI().get().navigate("register"));
+        centeringLayout.add(registerButton);
         add(centeringLayout);
     }
 

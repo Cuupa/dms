@@ -21,11 +21,11 @@ public final class CurrentUser {
      *
      * @throws IllegalStateException if the current session cannot be accessed.
      */
-    public static String get() {
-        String
+    public static User get() {
+        User
                 currentUser =
-                (String) getCurrentRequest().getWrappedSession().getAttribute(CURRENT_USER_SESSION_ATTRIBUTE_KEY);
-        return Objects.requireNonNullElse(currentUser, "");
+                (User) getCurrentRequest().getWrappedSession().getAttribute(CURRENT_USER_SESSION_ATTRIBUTE_KEY);
+        return Objects.requireNonNullElse(currentUser, new User());
     }
 
     /**
@@ -34,7 +34,7 @@ public final class CurrentUser {
      *
      * @throws IllegalStateException if the current session cannot be accessed.
      */
-    public static void set(String currentUser) {
+    public static void set(User currentUser) {
         if (currentUser == null) {
             getCurrentRequest().getWrappedSession().removeAttribute(CURRENT_USER_SESSION_ATTRIBUTE_KEY);
         } else {

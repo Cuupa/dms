@@ -1,7 +1,6 @@
 package com.cuupa.dms.ui.fileupload;
 
 import com.cuupa.dms.Constants;
-import com.cuupa.dms.authentication.AccessControlFactory;
 import com.cuupa.dms.storage.StorageService;
 import com.cuupa.dms.storage.document.Document;
 import com.cuupa.dms.storage.tag.Tag;
@@ -22,9 +21,12 @@ public class DocumentSaveUtil {
 
     private final StorageService storageService;
 
-    protected DocumentSaveUtil(FileUploadProperties properties, StorageService storageService) {
+    private final String username;
+
+    protected DocumentSaveUtil(FileUploadProperties properties, StorageService storageService, String username) {
         this.properties = properties;
         this.storageService = storageService;
+        this.username = username;
     }
 
     public void save() {
@@ -38,7 +40,7 @@ public class DocumentSaveUtil {
         storageService.save(new Document(path.toString(),
                                          properties.getFilename().trim(),
                                          properties.getFrom().trim(),
-                                         AccessControlFactory.getInstance().createAccessControl().getPrincipalName(),
+                                         username,
                                          LocalDateTime.of(properties.getDate(), properties.getTime()),
                                          properties.getTags().stream().map(Tag::new).collect(Collectors.toList())));
     }
@@ -49,7 +51,7 @@ public class DocumentSaveUtil {
                     path =
                     Paths.get(Constants.DOCUMENTFOLDER +
                               File.separator +
-                              AccessControlFactory.getInstance().createAccessControl().getPrincipalName() +
+                              username +
                               File.separator +
                               properties.getFilename());
             if (!path.toFile().exists()) {

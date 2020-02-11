@@ -1,7 +1,7 @@
 package com.cuupa.dms.ui.overview;
 
 import com.cuupa.dms.Constants;
-import com.cuupa.dms.authentication.AccessControlFactory;
+import com.cuupa.dms.authentication.AccessControl;
 import com.cuupa.dms.storage.StorageService;
 import com.cuupa.dms.storage.document.Document;
 import com.cuupa.dms.storage.document.db.DocumentDataProvider;
@@ -29,19 +29,14 @@ public class DocumentsOverview extends HorizontalLayout implements HasUrlParamet
 
     private final DocumentDataProvider dataProvider;
 
-    public DocumentsOverview(@Autowired StorageService storageService) {
+    public DocumentsOverview(@Autowired StorageService storageService, @Autowired AccessControl accessControl) {
         setSizeFull();
 
-        dataProvider =
-                new DocumentDataProvider(storageService,
-                                         AccessControlFactory.getInstance().createAccessControl().getPrincipalName());
+        dataProvider = new DocumentDataProvider(storageService, accessControl.getPrincipalName());
 
         DocumentGrid documentGrid = new DocumentGrid();
         documentPreview =
-                new DocumentPreview(documentGrid,
-                                    storageService.findTagsByOwner(AccessControlFactory.getInstance()
-                                                                                       .createAccessControl()
-                                                                                       .getPrincipalName()));
+                new DocumentPreview(documentGrid, storageService.findTagsByOwner(accessControl.getPrincipalName()));
         documentPreview.setVisible(false);
         documentGrid.addSelectionListener(getItemClickEventComponentEventListener());
         documentGrid.setDataProvider(dataProvider);

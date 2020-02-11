@@ -14,4 +14,5 @@ public interface AccessControl extends Serializable {
 
     void singOut();
 
+    boolean register(String username, String password, String salt, String firstname, String lastname);
 }

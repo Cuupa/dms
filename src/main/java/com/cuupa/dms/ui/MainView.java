@@ -1,7 +1,6 @@
 package com.cuupa.dms.ui;
 
-import com.cuupa.dms.authentication.AccessControlFactory;
-import com.cuupa.dms.storage.StorageService;
+import com.cuupa.dms.authentication.AccessControl;
 import com.cuupa.dms.ui.fileupload.FileUploadOverview;
 import com.cuupa.dms.ui.overview.DocumentsOverview;
 import com.vaadin.flow.component.AttachEvent;
@@ -44,11 +43,11 @@ public class MainView extends AppLayout implements RouterLayout {
 
     public static final String TITLE = "Documents";
 
-    public MainView(@Autowired final StorageService storageService) {
+    public MainView(@Autowired final AccessControl accessControl) {
 
         createMenuToggle();
 
-        Button logoutButton = createLogoutButton();
+        Button logoutButton = createLogoutButton(accessControl);
         Button uploadButton = createUploadButton();
         Button userButton = createUserButton();
         final HorizontalLayout buttonLayout = new HorizontalLayout();
@@ -90,10 +89,8 @@ public class MainView extends AppLayout implements RouterLayout {
         return uploadButton;
     }
 
-    private Button createLogoutButton() {
-        Button
-                logoutButton =
-                new Button("Logout", e -> AccessControlFactory.getInstance().createAccessControl().singOut());
+    private Button createLogoutButton(final AccessControl accessControl) {
+        Button logoutButton = new Button("Logout", e -> accessControl.singOut());
         logoutButton.setIcon(VaadinIcon.SIGN_OUT.create());
         return logoutButton;
     }

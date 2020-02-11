@@ -1,5 +1,6 @@
 package com.cuupa.dms.ui.fileupload;
 
+import com.cuupa.dms.authentication.AccessControl;
 import com.cuupa.dms.service.extern.ExternSemanticService;
 import com.cuupa.dms.storage.StorageService;
 import com.cuupa.dms.ui.MainView;
@@ -18,8 +19,10 @@ public class FileUploadOverview extends HorizontalLayout implements HasUrlParame
 
     public static final String VIEW_NAME = "upload";
 
-    public FileUploadOverview(@Autowired ExternSemanticService externSemanticService, @Autowired StorageService storageService) {
-        final PreviewAndPropertiesLayout previewAndPropertiesLayout = new PreviewAndPropertiesLayout(storageService);
+    public FileUploadOverview(@Autowired ExternSemanticService externSemanticService, @Autowired StorageService storageService, @Autowired AccessControl accessControl) {
+        final PreviewAndPropertiesLayout
+                previewAndPropertiesLayout =
+                new PreviewAndPropertiesLayout(storageService, accessControl);
 
         final MultiFileMemoryBuffer buffer = new MultiFileMemoryBuffer();
         final Upload upload = new Upload(buffer);
