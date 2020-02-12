@@ -19,4 +19,6 @@ public interface AccessControl extends Serializable {
     boolean register(final String username, final String password, final String salt, final String firstname, final String lastname, final String accesstoken);
 
     boolean save(User user);
+
+    boolean signIn(final String username, final String accessToken);
 }

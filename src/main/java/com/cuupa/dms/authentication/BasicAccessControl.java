@@ -56,4 +56,9 @@ public class BasicAccessControl implements AccessControl {
     public boolean save(User user) {
         return true;
     }
+
+    @Override
+    public boolean signIn(String username, String accessToken) {
+        return false;
+    }
 }

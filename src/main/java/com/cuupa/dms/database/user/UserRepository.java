@@ -6,6 +6,8 @@ public interface UserRepository extends CrudRepository<DbUser, Integer> {
 
     DbUser findByUsername(String username);
 
+    DbUser findByUsernameAndAccesstoken(String username, String accessToken);
+
     DbUser findByUsernameAndPassword(String username, String password);
 
     DbUser save(DbUser user);

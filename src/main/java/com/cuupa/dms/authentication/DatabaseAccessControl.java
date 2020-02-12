@@ -49,14 +49,14 @@ public class DatabaseAccessControl implements AccessControl {
     }
 
     @Override
+    public boolean signIn(String username, String accessToken) {
+        return userRepository.findByUsernameAndAccesstoken(username, accessToken) != null;
+    }
+
+    @Override
     public User getUser(final String username) {
         final DbUser dbUser = userRepository.findByUsername(username);
-        final User
-                user =
-                new User(dbUser.getId(),
-                         dbUser.getUsername(),
-                         dbUser.getFirstname(),
-                         dbUser.getLastname(),
+        final User user = new User(dbUser.getId(), dbUser.getUsername(), dbUser.getFirstname(), dbUser.getLastname(),
                          dbUser.getAccesstoken(),
                          dbUser.isConfirmed());
 
@@ -122,4 +122,5 @@ public class DatabaseAccessControl implements AccessControl {
 
         return userRepository.save(dbUser) != null;
     }
+
 }
