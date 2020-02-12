@@ -22,12 +22,27 @@ public class DbUser {
 
     private String accesstoken;
 
-    public DbUser(String username, String password, String salt, String firstname, String lastname) {
+    private boolean confirmed;
+
+    public DbUser(int id, String username, String password, String salt, String firstname, String lastname, String accesstoken, boolean confirmed) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.salt = salt;
         this.firstname = firstname;
         this.lastname = lastname;
+        this.accesstoken = accesstoken;
+        this.confirmed = confirmed;
+    }
+
+    public DbUser(String username, String password, String salt, String firstname, String lastname, String accesstoken, boolean confirmed) {
+        this.username = username;
+        this.password = password;
+        this.salt = salt;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.accesstoken = accesstoken;
+        this.confirmed = confirmed;
     }
 
     public DbUser() {
@@ -77,15 +92,21 @@ public class DbUser {
         this.accesstoken = accesstoken;
     }
 
+    public boolean isConfirmed() {
+        return confirmed;
+    }
+
+    public void setConfirmed(boolean confirmed) {
+        this.confirmed = confirmed;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+
     @Override
     public String toString() {
-        return "User{" +
-               "id=" +
-               id +
-               ", username='" +
-               username +
-               '\'' +
-               ", firstname='" +
+        return "User{" + "id=" + id + ", username='" + username + '\'' + ", firstname='" +
                firstname +
                '\'' +
                ", surname='" +

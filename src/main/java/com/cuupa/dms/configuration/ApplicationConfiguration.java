@@ -3,7 +3,8 @@ package com.cuupa.dms.configuration;
 import com.cuupa.dms.authentication.AccessControl;
 import com.cuupa.dms.authentication.DatabaseAccessControl;
 import com.cuupa.dms.database.user.UserRepository;
-import com.cuupa.dms.service.PasswordEncryptionService;
+import com.cuupa.dms.service.EncryptionService;
+import com.cuupa.dms.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,8 +23,13 @@ public class ApplicationConfiguration {
     }
 
     @Bean
-    public PasswordEncryptionService passwordEncryptionService() {
-        return new PasswordEncryptionService();
+    public EncryptionService passwordEncryptionService() {
+        return new EncryptionService();
+    }
+
+    @Bean
+    public MailService mailService() {
+        return new MailService();
     }
 }
 

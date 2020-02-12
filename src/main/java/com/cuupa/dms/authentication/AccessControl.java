@@ -4,15 +4,19 @@ import java.io.Serializable;
 
 public interface AccessControl extends Serializable {
 
-    boolean signIn(String username, String password);
+    boolean signIn(final String username, final String password, final boolean alreadyHashed);
+
+    User getUser(String username);
 
     boolean isUserSingedIn();
 
-    boolean isUserRole(UserRole role);
+    boolean isUserRole(final UserRole role);
 
     String getPrincipalName();
 
     void singOut();
 
-    boolean register(String username, String password, String salt, String firstname, String lastname);
+    boolean register(final String username, final String password, final String salt, final String firstname, final String lastname, final String accesstoken);
+
+    boolean save(User user);
 }

@@ -3,6 +3,7 @@ package com.cuupa.dms.ui;
 import com.cuupa.dms.authentication.AccessControl;
 import com.cuupa.dms.ui.fileupload.FileUploadOverview;
 import com.cuupa.dms.ui.overview.DocumentsOverview;
+import com.cuupa.dms.ui.settings.UserSettings;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -78,6 +79,7 @@ public class MainView extends AppLayout implements RouterLayout {
     private Button createUserButton() {
         Button userButton = new Button("Settings");
         userButton.setIcon(VaadinIcon.USER.create());
+        userButton.addClickListener(event -> userButton.getUI().ifPresent(ui -> ui.navigate(UserSettings.VIEW_NAME)));
         return userButton;
     }
 

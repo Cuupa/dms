@@ -8,7 +8,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Base64;
 
-public class PasswordEncryptionService {
+public class EncryptionService {
 
     private static final String algorithm = "PBKDF2WithHmacSHA1";
 
@@ -30,5 +30,12 @@ public class PasswordEncryptionService {
         byte[] salt = new byte[8];
         random.nextBytes(salt);
         return Base64.getEncoder().encodeToString(salt);
+    }
+
+    public String getAccessToken() throws NoSuchAlgorithmException {
+        SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+        byte[] randomBytes = new byte[24];
+        random.nextBytes(randomBytes);
+        return Base64.getEncoder().encodeToString(randomBytes);
     }
 }

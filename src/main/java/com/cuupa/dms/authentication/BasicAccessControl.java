@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 public class BasicAccessControl implements AccessControl {
 
     @Override
-    public boolean signIn(String username, String password) {
+    public boolean signIn(String username, String password, boolean alreadyHashed) {
         if (StringUtils.isBlank(username)) {
             return false;
         }
@@ -17,8 +17,13 @@ public class BasicAccessControl implements AccessControl {
             return false;
         }
 
-        CurrentUser.set(new User(username, username, username));
+        CurrentUser.set(new User(0, username, username, username, "", false));
         return true;
+    }
+
+    @Override
+    public User getUser(String username) {
+        return null;
     }
 
     @Override
@@ -43,7 +48,12 @@ public class BasicAccessControl implements AccessControl {
     }
 
     @Override
-    public boolean register(String username, String password, String salt, String firstname, String lastname) {
+    public boolean register(String value, String username, String password, String salt, String firstname, String lastname) {
+        return true;
+    }
+
+    @Override
+    public boolean save(User user) {
         return true;
     }
 }

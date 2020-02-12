@@ -2,7 +2,7 @@ package com.cuupa.dms.authentication;
 
 import com.cuupa.dms.database.user.DbUser;
 import com.cuupa.dms.database.user.UserRepository;
-import com.cuupa.dms.service.PasswordEncryptionService;
+import com.cuupa.dms.service.EncryptionService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,24 +14,29 @@ public class DatabaseAccessControl implements AccessControl {
 
     private final UserRepository userRepository;
 
-    private final PasswordEncryptionService passwordEncryptionService;
+    private final EncryptionService encryptionService;
 
-    public DatabaseAccessControl(@Autowired UserRepository userRepository, @Autowired PasswordEncryptionService passwordEncryptionService) {
+    public DatabaseAccessControl(@Autowired UserRepository userRepository, @Autowired EncryptionService encryptionService) {
         this.userRepository = userRepository;
-        this.passwordEncryptionService = passwordEncryptionService;
+        this.encryptionService = encryptionService;
     }
 
     @Override
-    public boolean signIn(final String username, final String password) {
+    public boolean signIn(final String username, final String password, final boolean alreadyHashed) {
         DbUser dbUser = userRepository.findByUsername(username);
         if (dbUser != null) {
             try {
-                final String
-                        encryptedPassword =
-                        passwordEncryptionService.getEncryptedPassword(password, dbUser.getSalt());
+                String encryptedPassword = getPassword(password, alreadyHashed, dbUser);
                 dbUser = userRepository.findByUsernameAndPassword(username, encryptedPassword);
                 if (dbUser != null) {
-                    User user = new User(dbUser.getUsername(), dbUser.getFirstname(), dbUser.getLastname());
+                    User
+                            user =
+                            new User(dbUser.getId(),
+                                     dbUser.getUsername(),
+                                     dbUser.getFirstname(),
+                                     dbUser.getLastname(),
+                                     dbUser.getAccesstoken(),
+                                     dbUser.isConfirmed());
                     CurrentUser.set(user);
                 }
             } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
@@ -41,6 +46,33 @@ public class DatabaseAccessControl implements AccessControl {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public User getUser(final String username) {
+        final DbUser dbUser = userRepository.findByUsername(username);
+        final User
+                user =
+                new User(dbUser.getId(),
+                         dbUser.getUsername(),
+                         dbUser.getFirstname(),
+                         dbUser.getLastname(),
+                         dbUser.getAccesstoken(),
+                         dbUser.isConfirmed());
+
+        user.setSalt(dbUser.getSalt());
+        user.setPassword(dbUser.getPassword());
+        return user;
+    }
+
+    private String getPassword(String password, boolean alreadyHashed, DbUser dbUser) throws InvalidKeySpecException, NoSuchAlgorithmException {
+        String encryptedPassword;
+        if (!alreadyHashed) {
+            encryptedPassword = encryptionService.getEncryptedPassword(password, dbUser.getSalt());
+        } else {
+            encryptedPassword = password;
+        }
+        return encryptedPassword;
     }
 
     @Override
@@ -65,13 +97,29 @@ public class DatabaseAccessControl implements AccessControl {
     }
 
     @Override
-    public boolean register(final String username, final String password, final String salt, final String firstname, final String lastname) {
+    public boolean register(final String username, final String password, final String salt, final String firstname, final String lastname, final String accesstoken) {
         final DbUser byUsername = userRepository.findByUsername(username);
         if (byUsername == null) {
-            final DbUser dbUser = new DbUser(username, password, salt, firstname, lastname);
+            final DbUser dbUser = new DbUser(username, password, salt, firstname, lastname, accesstoken, false);
             return userRepository.save(dbUser) != null;
         }
 
         return false;
+    }
+
+    @Override
+    public boolean save(User user) {
+        final DbUser
+                dbUser =
+                new DbUser(user.getId(),
+                           user.getUsername(),
+                           user.getPassword(),
+                           user.getSalt(),
+                           user.getFirstname(),
+                           user.getLastname(),
+                           user.getAccessToken(),
+                           user.isConfirmed());
+
+        return userRepository.save(dbUser) != null;
     }
 }
