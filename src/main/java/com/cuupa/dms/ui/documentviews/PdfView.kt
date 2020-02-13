@@ -1,44 +1,39 @@
-package com.cuupa.dms.ui.documentviews;
+package com.cuupa.dms.ui.documentviews
 
-import com.cuupa.dms.storage.document.Document;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.server.StreamResource;
+import com.cuupa.dms.storage.document.Document
+import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import com.vaadin.flow.server.InputStreamFactory
+import com.vaadin.flow.server.StreamResource
+import java.io.ByteArrayInputStream
+import java.io.FileInputStream
+import java.io.IOException
+import java.io.InputStream
 
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+class PdfView : VerticalLayout {
 
-public class PdfView extends VerticalLayout {
-
-    public PdfView(final Document document) {
-        StreamResource
-                streamResource =
-                new StreamResource(document.getName(), () -> getInputStream(document.getFilename()));
-        init(streamResource);
+    constructor(document: Document) {
+        val streamResource = StreamResource(document.name, InputStreamFactory { getInputStream(document.filename) })
+        init(streamResource)
     }
 
-    public PdfView() {
-
+    constructor()
+    constructor(streamResource: StreamResource) {
+        init(streamResource)
     }
 
-    public PdfView(final StreamResource streamResource) {
-        init(streamResource);
+    private fun init(streamResource: StreamResource) {
+        val view = PdfElement("object")
+        view.setAttribute("data", streamResource)
+        element.appendChild(view)
+        setSizeFull()
     }
 
-    private void init(StreamResource streamResource) {
-        PdfElement view = new PdfElement("object");
-        view.setAttribute("data", streamResource);
-        getElement().appendChild(view);
-        setSizeFull();
-    }
-
-    private InputStream getInputStream(final String filename) {
-        try (FileInputStream inputStream = new FileInputStream(filename)) {
-            return new ByteArrayInputStream(inputStream.readAllBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
+    private fun getInputStream(filename: String): InputStream? {
+        try {
+            FileInputStream(filename).use { inputStream -> return ByteArrayInputStream(inputStream.readAllBytes()) }
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
-        return null;
+        return null
     }
 }

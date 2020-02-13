@@ -1,29 +1,27 @@
-package com.cuupa.dms.configuration;
+package com.cuupa.dms.configuration
 
-import com.cuupa.dms.storage.StorageService;
-import com.cuupa.dms.storage.document.db.MongoDBDocumentStorage;
-import com.cuupa.dms.storage.tag.db.MongoDBTagStorage;
-import com.cuupa.dms.storage.tag.db.TagSequenceGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import com.cuupa.dms.storage.StorageService
+import com.cuupa.dms.storage.document.db.MongoDBDocumentStorage
+import com.cuupa.dms.storage.tag.db.MongoDBTagStorage
+import com.cuupa.dms.storage.tag.db.TagSequenceGenerator
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 
 @Configuration
-public class StorageConfiguration {
-
+open class StorageConfiguration {
     @Autowired
-    private MongoDBDocumentStorage documentStorage;
-
+    private val documentStorage: MongoDBDocumentStorage? = null
     @Autowired
-    private MongoDBTagStorage tagStorage;
+    private val tagStorage: MongoDBTagStorage? = null
 
     @Bean
-    public StorageService storageService() {
-        return new StorageService(documentStorage, tagStorage);
+    open fun storageService(): StorageService {
+        return StorageService(documentStorage!!, tagStorage!!)
     }
 
     @Bean
-    public TagSequenceGenerator tagSequenceGenerator() {
-        return new TagSequenceGenerator();
+    open fun tagSequenceGenerator(): TagSequenceGenerator {
+        return TagSequenceGenerator()
     }
 }

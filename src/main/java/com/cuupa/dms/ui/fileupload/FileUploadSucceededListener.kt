@@ -1,96 +1,65 @@
-package com.cuupa.dms.ui.fileupload;
+package com.cuupa.dms.ui.fileupload
 
-import com.cuupa.dms.service.extern.ExternSemanticService;
-import com.cuupa.dms.service.extern.SemanticResult;
-import com.cuupa.dms.ui.documentviews.PdfView;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.upload.SucceededEvent;
-import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
-import com.vaadin.flow.server.StreamResource;
-import org.apache.commons.io.IOUtils;
+import com.cuupa.dms.service.extern.ExternSemanticService
+import com.cuupa.dms.service.extern.SemanticResult
+import com.cuupa.dms.ui.documentviews.PdfView
+import com.vaadin.flow.component.ComponentEventListener
+import com.vaadin.flow.component.upload.SucceededEvent
+import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer
+import com.vaadin.flow.server.InputStreamFactory
+import com.vaadin.flow.server.StreamResource
+import org.apache.commons.io.IOUtils
+import java.io.ByteArrayInputStream
+import java.io.IOException
+import java.io.InputStream
+import java.time.LocalDate
+import java.time.LocalTime
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+class FileUploadSucceededListener(private val externSemanticService: ExternSemanticService, private val buffer: MultiFileMemoryBuffer, private val properties: MutableList<FileUploadProperties>, private val preview: MutableList<PdfView>) : ComponentEventListener<SucceededEvent> {
 
-public class FileUploadSucceededListener implements ComponentEventListener<SucceededEvent> {
+    override fun onComponentEvent(event: SucceededEvent) {
+        val fileUploadProperties = FileUploadProperties()
+        fileUploadProperties.setFilename(event.fileName)
 
-    private final ExternSemanticService externSemanticService;
-
-    private final List<FileUploadProperties> properties;
-
-    private final MultiFileMemoryBuffer buffer;
-
-    private final List<PdfView> preview;
-
-    public FileUploadSucceededListener(final ExternSemanticService externSemanticService, final MultiFileMemoryBuffer buffer, final List<FileUploadProperties> properties, final List<PdfView> preview) {
-        this.externSemanticService = externSemanticService;
-        this.properties = properties;
-        this.buffer = buffer;
-        this.preview = preview;
-    }
-
-    @Override
-    public void onComponentEvent(SucceededEvent event) {
-
-        FileUploadProperties fileUploadProperties = new FileUploadProperties();
-
-        fileUploadProperties.setFilename(event.getFileName());
-        List<SemanticResult>
-                semanticResults =
-                getResultFromSemantic(externSemanticService, buffer.getInputStream(event.getFileName()));
+        val semanticResults = getResultFromSemantic(externSemanticService, buffer.getInputStream(event.fileName))
 
         if (semanticResults.isEmpty()) {
-            fileUploadProperties.setDate(LocalDate.now());
-            fileUploadProperties.setTime(LocalTime.now());
+            fileUploadProperties.setDate(LocalDate.now())
+            fileUploadProperties.setTime(LocalTime.now())
         } else {
-            fileUploadProperties.setFrom(semanticResults.get(0).getSender());
-            fileUploadProperties.setDate(LocalDate.now());
-            fileUploadProperties.setTime(LocalTime.now());
-            List<String>
-                    collect =
-                    semanticResults.stream().map(SemanticResult::getTopicName).collect(Collectors.toList());
-            //tags.setValue();
-            fileUploadProperties.setTags(collect);
+            fileUploadProperties.setFrom(semanticResults[0].sender)
+            fileUploadProperties.setDate(LocalDate.now())
+            fileUploadProperties.setTime(LocalTime.now())
+            fileUploadProperties.setTags(semanticResults.map(SemanticResult::topicName))
         }
 
-        fileUploadProperties.setContent(getBytes(buffer, event));
-        PdfView pdfView = new PdfView(new StreamResource(event.getFileName(), () -> {
-            try {
-                return new ByteArrayInputStream((buffer.getInputStream(event.getFileName()).readAllBytes()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }));
+        fileUploadProperties.content = getBytes(buffer, event)
 
-        preview.add(pdfView);
-        properties.add(fileUploadProperties);
+        val pdfView = PdfView(StreamResource(event.fileName, InputStreamFactory {
+            ByteArrayInputStream(buffer.getInputStream(event.fileName).readAllBytes())
+        }))
+        preview.add(pdfView)
+        properties.add(fileUploadProperties)
     }
 
-    private byte[] getBytes(MultiFileMemoryBuffer buffer, SucceededEvent event) {
-        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(buffer.getInputStream(event.getFileName())
-                                                                                        .readAllBytes())) {
-
-            return byteArrayInputStream.readAllBytes();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new byte[0];
-    }
-
-    private List<SemanticResult> getResultFromSemantic(ExternSemanticService externSemanticService, InputStream inputStream) {
+    private fun getBytes(buffer: MultiFileMemoryBuffer, event: SucceededEvent): ByteArray {
         try {
-            byte[] value = IOUtils.toByteArray(inputStream);
-            return externSemanticService.analize(value);
-        } catch (Exception e) {
-            e.printStackTrace();
+            ByteArrayInputStream(buffer.getInputStream(event.fileName)
+                    .readAllBytes()).use { byteArrayInputStream -> return byteArrayInputStream.readAllBytes() }
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
-        return Collections.emptyList();
+        return ByteArray(0)
     }
+
+    private fun getResultFromSemantic(externSemanticService: ExternSemanticService, inputStream: InputStream): List<SemanticResult> {
+        try {
+            val value = IOUtils.toByteArray(inputStream)
+            return externSemanticService.analize(value)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return emptyList()
+    }
+
 }

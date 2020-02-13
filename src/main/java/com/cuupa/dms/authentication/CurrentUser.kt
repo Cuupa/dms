@@ -1,19 +1,13 @@
-package com.cuupa.dms.authentication;
+package com.cuupa.dms.authentication
 
-import com.vaadin.flow.server.VaadinRequest;
-import com.vaadin.flow.server.VaadinService;
+import com.vaadin.flow.server.VaadinRequest
+import com.vaadin.flow.server.VaadinService
 
-import java.util.Objects;
-
-public final class CurrentUser {
-
+object CurrentUser {
     /**
      * The attribute key used to store the username in the session.
      */
-    public static final String CURRENT_USER_SESSION_ATTRIBUTE_KEY = CurrentUser.class.getCanonicalName();
-
-    private CurrentUser() {
-    }
+    val CURRENT_USER_SESSION_ATTRIBUTE_KEY = CurrentUser::class.java.canonicalName
 
     /**
      * Returns the name of the current user stored in the current session, or an
@@ -21,32 +15,28 @@ public final class CurrentUser {
      *
      * @throws IllegalStateException if the current session cannot be accessed.
      */
-    public static User get() {
-        User
-                currentUser =
-                (User) getCurrentRequest().getWrappedSession().getAttribute(CURRENT_USER_SESSION_ATTRIBUTE_KEY);
-        return Objects.requireNonNullElse(currentUser, new User());
+    @JvmStatic
+    fun get(): User {
+        val currentUser: User? = currentRequest.wrappedSession.getAttribute(CURRENT_USER_SESSION_ATTRIBUTE_KEY) as User?
+        return currentUser ?: User()
     }
 
     /**
      * Sets the name of the current user and stores it in the current session.
-     * Using a {@code null} username will remove the username from the session.
+     * Using a `null` username will remove the username from the session.
      *
      * @throws IllegalStateException if the current session cannot be accessed.
      */
-    public static void set(User currentUser) {
+    @JvmStatic
+    fun set(currentUser: User?) {
         if (currentUser == null) {
-            getCurrentRequest().getWrappedSession().removeAttribute(CURRENT_USER_SESSION_ATTRIBUTE_KEY);
+            currentRequest.wrappedSession.removeAttribute(CURRENT_USER_SESSION_ATTRIBUTE_KEY)
         } else {
-            getCurrentRequest().getWrappedSession().setAttribute(CURRENT_USER_SESSION_ATTRIBUTE_KEY, currentUser);
+            currentRequest.wrappedSession.setAttribute(CURRENT_USER_SESSION_ATTRIBUTE_KEY, currentUser)
         }
     }
 
-    private static VaadinRequest getCurrentRequest() {
-        VaadinRequest request = VaadinService.getCurrentRequest();
-        if (request == null) {
-            throw new IllegalStateException("No request bound to current thread.");
-        }
-        return request;
-    }
+    private val currentRequest: VaadinRequest
+        get() = VaadinService.getCurrentRequest()
+                ?: throw IllegalStateException("No request bound to current thread.")
 }

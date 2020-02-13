@@ -1,73 +1,26 @@
-package com.cuupa.dms.storage.tag;
+package com.cuupa.dms.storage.tag
 
-import com.cuupa.dms.storage.tag.db.DBTag;
+import com.cuupa.dms.storage.tag.db.DBTag
 
-public class Tag implements Comparable<Tag> {
+data class Tag(var name: String, var owner: String?) : Comparable<Tag> {
 
-    private String name;
+    constructor(name: String) : this(name, null)
 
-    private String owner;
-
-    public Tag(String name) {
-        this.name = name;
+    override fun toString(): String {
+        return name
     }
 
-    public Tag(String name, String owner) {
-        this.name = name;
-        this.owner = owner;
+    override fun compareTo(tag: Tag): Int {
+        return name.compareTo(tag.name)
     }
 
-    public Tag() {
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
-    @Override
-    public String toString() {
-        return name;
-    }
-
-    @Override
-    public int compareTo(Tag tag) {
-        if (tag.name == null && this.name == null) {
-            return 0;
+    override fun equals(other: Any?): Boolean {
+        if (other is Tag) {
+            return other.name == name
         }
-
-        if (this.name == null) {
-            return -1;
+        if (other is DBTag) {
+            return other.name == name
         }
-
-        if (tag.name == null) {
-            return 1;
-        }
-        return this.name.compareTo(tag.name);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Tag) {
-            Tag other = (Tag) obj;
-            return other.getName().equals(this.name);
-        }
-
-        if (obj instanceof DBTag) {
-            DBTag other = (DBTag) obj;
-            return other.getName().equals(this.name);
-        }
-        return false;
+        return false
     }
 }

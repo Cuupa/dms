@@ -1,27 +1,22 @@
-package com.cuupa.dms.storage.tag.db;
+package com.cuupa.dms.storage.tag.db
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.mongodb.core.FindAndModifyOptions
+import org.springframework.data.mongodb.core.MongoOperations
+import org.springframework.data.mongodb.core.query.Criteria
+import org.springframework.data.mongodb.core.query.Query
+import org.springframework.data.mongodb.core.query.Update
+import java.util.*
 
-import java.util.Objects;
-
-import static org.springframework.data.mongodb.core.FindAndModifyOptions.options;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
-
-public class TagSequenceGenerator {
-
+class TagSequenceGenerator {
     @Autowired
-    private MongoOperations mongoOperations;
+    private val mongoOperations: MongoOperations? = null
 
-    public long generateSequence(String sequenceName) {
-        TagDatabaseSequence
-                counter =
-                mongoOperations.findAndModify(query(where("_id").is(sequenceName)),
-                                              new Update().inc("seq", 1),
-                                              options().returnNew(true).upsert(true),
-                                              TagDatabaseSequence.class);
-        return !Objects.isNull(counter) ? counter.getSeq() : 1L;
+    fun generateSequence(sequenceName: String?): Long {
+        val counter = mongoOperations!!.findAndModify(Query.query(Criteria.where("_id").`is`(sequenceName)),
+                Update().inc("seq", 1),
+                FindAndModifyOptions.options().returnNew(true).upsert(true),
+                TagDatabaseSequence::class.java)
+        return if (!Objects.isNull(counter)) counter.seq else 1L
     }
 }

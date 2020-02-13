@@ -1,35 +1,35 @@
-package com.cuupa.dms.listener;
+package com.cuupa.dms.listener
 
-import com.cuupa.dms.authentication.AccessControl;
-import com.cuupa.dms.ui.login.LoginScreen;
-import com.cuupa.dms.ui.register.RegisterScreen;
-import com.vaadin.flow.server.ServiceInitEvent;
-import com.vaadin.flow.server.VaadinServiceInitListener;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.stereotype.Component;
+import com.cuupa.dms.authentication.AccessControl
+import com.cuupa.dms.ui.login.LoginScreen
+import com.cuupa.dms.ui.register.RegisterView
+import com.vaadin.flow.router.BeforeEnterEvent
+import com.vaadin.flow.server.ServiceInitEvent
+import com.vaadin.flow.server.UIInitEvent
+import com.vaadin.flow.server.VaadinServiceInitListener
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.stereotype.Component
 
 @EnableAutoConfiguration
 @Component
-public class DmsInitListener implements VaadinServiceInitListener {
-
+class DmsInitListener : VaadinServiceInitListener {
     @Autowired
-    private AccessControl accessControl;
+    private val accessControl: AccessControl? = null
 
-    @Override
-    public void serviceInit(ServiceInitEvent serviceInitEvent) {
-
-        serviceInitEvent.getSource()
-                        .addUIInitListener(uiInitEvent -> uiInitEvent.getUI().addBeforeEnterListener(enterEvent -> {
-                            if (RegisterScreen.class.equals(enterEvent.getNavigationTarget())) {
-                                return;
+    override fun serviceInit(serviceInitEvent: ServiceInitEvent) {
+        serviceInitEvent.source
+                .addUIInitListener { uiInitEvent: UIInitEvent ->
+                    uiInitEvent.ui.addBeforeEnterListener { enterEvent: BeforeEnterEvent ->
+                        if (RegisterView::class.java == enterEvent.navigationTarget) {
+                            return@addBeforeEnterListener
+                        }
+                        if (!accessControl!!.isUserSingedIn) {
+                            if (LoginScreen::class.java != enterEvent.navigationTarget) {
+                                enterEvent.rerouteTo(LoginScreen::class.java)
                             }
-
-                            if (!accessControl.isUserSingedIn()) {
-                                if (!LoginScreen.class.equals(enterEvent.getNavigationTarget())) {
-                                    enterEvent.rerouteTo(LoginScreen.class);
-                                }
-                            }
-                        }));
+                        }
+                    }
+                }
     }
 }

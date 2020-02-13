@@ -1,147 +1,121 @@
-package com.cuupa.dms.ui.fileupload;
+package com.cuupa.dms.ui.fileupload
 
-import com.cuupa.dms.authentication.AccessControl;
-import com.cuupa.dms.storage.StorageService;
-import com.cuupa.dms.ui.documentviews.PdfView;
-import com.cuupa.dms.ui.overview.DocumentsOverview;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.cuupa.dms.UIConstants
+import com.cuupa.dms.authentication.AccessControl
+import com.cuupa.dms.storage.StorageService
+import com.cuupa.dms.ui.documentviews.PdfView
+import com.cuupa.dms.ui.overview.DocumentsOverview
+import com.vaadin.flow.component.UI
+import com.vaadin.flow.component.button.Button
+import com.vaadin.flow.component.icon.VaadinIcon
+import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout
+import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import org.springframework.beans.factory.annotation.Autowired
+import java.util.*
 
-import java.util.List;
-import java.util.Vector;
+class PreviewAndPropertiesLayout(@Autowired storageService: StorageService, @Autowired accessControl: AccessControl) : VerticalLayout() {
 
-public class PreviewAndPropertiesLayout extends VerticalLayout {
+    private val previousButton = Button(UIConstants.previous)
+    private val nextButton = Button(UIConstants.next)
+    private val save = Button(UIConstants.save)
+    private val cancel = Button(UIConstants.cancel)
+    private val contentLayout = HorizontalLayout()
 
-    private final Button previousButton = new Button("Previeous");
+    val properties: MutableList<FileUploadProperties> = Vector()
+    val preview: MutableList<PdfView> = Vector()
 
-    private final Button nextButton = new Button("Next");
+    private var lastPropertiesLayout = FileUploadProperties()
+    private var lastPreviewLayout = VerticalLayout()
+    private var index = 0
 
-    private final Button save = new Button("Save");
-
-    private final Button cancel = new Button("Cancel");
-
-    private final HorizontalLayout contentLayout = new HorizontalLayout();
-
-    private final List<FileUploadProperties> properties = new Vector<>();
-
-    private final List<PdfView> preview = new Vector<>();
-
-    private FileUploadProperties lastPropertiesLayout = new FileUploadProperties();
-
-    private VerticalLayout lastPreviewLayout = new VerticalLayout();
-
-    private int index = 0;
-
-    public PreviewAndPropertiesLayout(@Autowired StorageService storageService, @Autowired AccessControl accessControl) {
-        initButtons(storageService, accessControl);
-        lastPreviewLayout.setVisible(false);
-        lastPropertiesLayout.setVisible(false);
-        setMinWidth("90%");
-        setHeight("90%");
-        contentLayout.add(lastPreviewLayout, lastPropertiesLayout);
-        contentLayout.setJustifyContentMode(JustifyContentMode.CENTER);
-        contentLayout.setWidth("100%");
-        HorizontalLayout horizontalLayout = new HorizontalLayout(previousButton, contentLayout, nextButton);
-        horizontalLayout.setSizeFull();
-        horizontalLayout.setJustifyContentMode(JustifyContentMode.CENTER);
-        add(horizontalLayout);
-        setJustifyContentMode(JustifyContentMode.START);
-
-        setContent();
-
-        final HorizontalLayout horizontalLayoutSaveCancel = new HorizontalLayout();
-        horizontalLayoutSaveCancel.add(cancel, save);
-        horizontalLayoutSaveCancel.setMinWidth("100%");
-        horizontalLayoutSaveCancel.setJustifyContentMode(JustifyContentMode.END);
-        add(horizontalLayoutSaveCancel);
-
-        setSizeFull();
+    fun allFinishedEvent() {
+        previousButton.isVisible = true
+        nextButton.isVisible = true
+        previousButton.isEnabled = false
+        nextButton.isEnabled = false
+        setContent()
     }
 
-    public void allFinishedEvent() {
-        previousButton.setVisible(true);
-        nextButton.setVisible(true);
-        previousButton.setEnabled(false);
-        nextButton.setEnabled(false);
-        setContent();
-    }
-
-    private void incrementIndex() {
-        if (index < properties.size() - 1) {
-            index++;
-            setContent();
+    private fun incrementIndex() {
+        if (index < properties.size - 1) {
+            index.inc()
+            setContent()
         } else {
-            nextButton.setEnabled(false);
+            nextButton.isEnabled = false
         }
     }
 
-    private void decrementIndex() {
+    private fun decrementIndex() {
         if (index > 0) {
-            index--;
-            setContent();
+            index.dec()
+            setContent()
         } else {
-            previousButton.setEnabled(false);
+            previousButton.isEnabled = false
         }
     }
 
-    private void setContent() {
+    private fun setContent() {
         if (!properties.isEmpty()) {
-            contentLayout.replace(lastPropertiesLayout, properties.get(index));
-            lastPropertiesLayout = properties.get(index);
-            lastPropertiesLayout.setHeight("100%");
-            lastPropertiesLayout.setWidth("50%");
-            save.setEnabled(true);
+            contentLayout.replace(lastPropertiesLayout, properties[index])
+            lastPropertiesLayout = properties[index]
+            lastPropertiesLayout.height = UIConstants.maxSize
+            lastPropertiesLayout.width = UIConstants.halfSize
+            save.isEnabled = true
         }
-
-
         if (!preview.isEmpty()) {
-            contentLayout.replace(lastPreviewLayout, preview.get(index));
-            lastPreviewLayout = preview.get(index);
-            lastPreviewLayout.setHeight("100%");
-            lastPreviewLayout.setWidth("50%");
+            contentLayout.replace(lastPreviewLayout, preview[index])
+            lastPreviewLayout = preview[index]
+            lastPreviewLayout.height = UIConstants.maxSize
+            lastPreviewLayout.width = UIConstants.halfSize
         }
-
         if (index > 0) {
-            previousButton.setEnabled(true);
-        } else if (index < properties.size() - 1) {
-            nextButton.setEnabled(true);
+            previousButton.isEnabled = true
+        } else if (index < properties.size - 1) {
+            nextButton.isEnabled = true
         }
-
     }
 
-    private void initButtons(StorageService storageService, AccessControl accessControl) {
-        previousButton.setMinWidth("10%");
-        nextButton.setMinWidth("10%");
-
-        previousButton.setVisible(false);
-        nextButton.setVisible(false);
-        previousButton.setIcon(VaadinIcon.ANGLE_LEFT.create());
-        nextButton.setIcon(VaadinIcon.ANGLE_RIGHT.create());
-        previousButton.addClickListener(event -> decrementIndex());
-
-        nextButton.addClickListener(event -> incrementIndex());
-
-        save.setEnabled(false);
-        save.setThemeName("primary");
-        save.addClickListener(event -> {
-
-            for (FileUploadProperties property : properties) {
-                new DocumentSaveUtil(property, storageService, accessControl.getPrincipalName()).save();
+    private fun initButtons(storageService: StorageService, accessControl: AccessControl) {
+        previousButton.minWidth = "10%"
+        nextButton.minWidth = "10%"
+        previousButton.isVisible = false
+        nextButton.isVisible = false
+        previousButton.icon = VaadinIcon.ANGLE_LEFT.create()
+        nextButton.icon = VaadinIcon.ANGLE_RIGHT.create()
+        previousButton.addClickListener { decrementIndex() }
+        nextButton.addClickListener { incrementIndex() }
+        save.isEnabled = false
+        save.themeName = UIConstants.primaryTheme
+        save.addClickListener {
+            properties.forEach { property ->
+                DocumentSaveUtil(property, storageService, accessControl.principalName).save()
             }
-            save.getUI().ifPresent(ui -> ui.navigate(DocumentsOverview.VIEW_NAME));
-        });
-
-        cancel.addClickListener(event -> cancel.getUI().ifPresent(ui -> ui.navigate(DocumentsOverview.VIEW_NAME)));
+            save.ui.ifPresent { ui: UI -> ui.navigate(DocumentsOverview.VIEW_NAME) }
+        }
+        cancel.addClickListener { cancel.ui.ifPresent { ui: UI -> ui.navigate(DocumentsOverview.VIEW_NAME) } }
     }
 
-    public List<FileUploadProperties> getProperties() {
-        return properties;
-    }
-
-    public List<PdfView> getPreview() {
-        return preview;
+    init {
+        initButtons(storageService, accessControl)
+        lastPreviewLayout.isVisible = false
+        lastPropertiesLayout.isVisible = false
+        minWidth = "90%"
+        height = "90%"
+        contentLayout.add(lastPreviewLayout, lastPropertiesLayout)
+        contentLayout.justifyContentMode = JustifyContentMode.CENTER
+        contentLayout.width = UIConstants.maxSize
+        val horizontalLayout = HorizontalLayout(previousButton, contentLayout, nextButton)
+        horizontalLayout.setSizeFull()
+        horizontalLayout.justifyContentMode = JustifyContentMode.CENTER
+        add(horizontalLayout)
+        justifyContentMode = JustifyContentMode.START
+        setContent()
+        val horizontalLayoutSaveCancel = HorizontalLayout()
+        horizontalLayoutSaveCancel.add(cancel, save)
+        horizontalLayoutSaveCancel.minWidth = UIConstants.maxSize
+        horizontalLayoutSaveCancel.justifyContentMode = JustifyContentMode.END
+        add(horizontalLayoutSaveCancel)
+        setSizeFull()
     }
 }

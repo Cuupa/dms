@@ -1,21 +1,21 @@
-package com.cuupa.dms.ui.documentviews;
+package com.cuupa.dms.ui.documentviews
 
-import com.vaadin.flow.component.HasSize;
-import com.vaadin.flow.dom.Element;
+import com.vaadin.flow.component.HasSize
+import com.vaadin.flow.dom.Element
 
-public class PdfElement extends Element implements HasSize {
+class PdfElement(tag: String?) : Element(tag), HasSize {
 
-    private static final String mediaType = "application/pdf";
-
-    public PdfElement(String tag) {
-        super(tag);
-        setAttribute("type", mediaType);
-        getStyle().set("display", "block");
-        setSizeFull();
+    override fun getElement(): Element {
+        return this
     }
 
-    @Override
-    public Element getElement() {
-        return this;
+    companion object {
+        private const val mediaType = "application/pdf"
+    }
+
+    init {
+        setAttribute("type", mediaType)
+        style["display"] = "block"
+        setSizeFull()
     }
 }

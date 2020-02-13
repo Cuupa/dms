@@ -1,99 +1,82 @@
-package com.cuupa.dms.ui.register;
+package com.cuupa.dms.ui.register
 
-import com.cuupa.dms.authentication.AccessControl;
-import com.cuupa.dms.service.EncryptionService;
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.button.Button;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.cuupa.dms.UIConstants
+import com.cuupa.dms.authentication.AccessControl
+import com.cuupa.dms.service.EncryptionService
+import com.vaadin.flow.component.ClickEvent
+import com.vaadin.flow.component.ComponentEventListener
+import com.vaadin.flow.component.button.Button
+import org.springframework.beans.factory.annotation.Autowired
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+class RegisterClicklistener(private val registerView: RegisterView) : ComponentEventListener<ClickEvent<Button?>> {
 
-public class RegisterClicklistener implements com.vaadin.flow.component.ComponentEventListener<com.vaadin.flow.component.ClickEvent<com.vaadin.flow.component.button.Button>> {
-
-    private final RegisterScreen registerScreen;
-
-    public RegisterClicklistener(RegisterScreen registerScreen) {
-        this.registerScreen = registerScreen;
-    }
-
-    @Override
-    public void onComponentEvent(ClickEvent<Button> event) {
-
+    override fun onComponentEvent(event: ClickEvent<Button?>) {
         if (passwordMatching()) {
-            showErrorPasswordMatching();
+            showErrorPasswordMatching()
         }
-
         if (allRequiredFieldsFilled()) {
-            if (isMailAddress()) {
-                registerUser(registerScreen.getAccessControl(), registerScreen.getEncryptionService());
+            if (isMailAddress) {
+                registerUser(registerView.accessControl, registerView.encryptionService)
             } else {
-                showErrorNoMail();
+                showErrorNoMail()
             }
         } else {
-            showErrorRequiredFields();
+            showErrorRequiredFields()
         }
     }
 
-    private void showErrorPasswordMatching() {
-        registerScreen.getPasswordConfirmationTextField().setInvalid(true);
+    private fun showErrorPasswordMatching() {
+        registerView.passwordConfirmationTextField.isInvalid = true
     }
 
-    private boolean passwordMatching() {
-        return registerScreen.getPasswordTextField()
-                             .getValue()
-                             .equals(registerScreen.getPasswordConfirmationTextField().getValue());
+    private fun passwordMatching(): Boolean {
+        return (registerView.passwordTextField
+                .value
+                == registerView.passwordConfirmationTextField.value)
     }
 
-    private void showErrorNoMail() {
-        registerScreen.getUsernameTextField().setErrorMessage("Please provide a valid mail address");
-        registerScreen.getUsernameTextField().setInvalid(true);
+    private fun showErrorNoMail() {
+        registerView.usernameTextField.errorMessage = UIConstants.provideValidMailaddress
+        registerView.usernameTextField.isInvalid = true
     }
 
-    private boolean isMailAddress() {
-        final String username = registerScreen.getUsernameTextField().getValue();
-        return new EMail(username).isValid();
-    }
-
-    private void showErrorRequiredFields() {
-        if (StringUtils.isBlank(registerScreen.getUsernameTextField().getValue())) {
-            registerScreen.getUsernameTextField().setInvalid(true);
+    private val isMailAddress: Boolean
+        get() {
+            val username = registerView.usernameTextField.value
+            return EMail(username).isValid
         }
 
-        if (StringUtils.isBlank(registerScreen.getPasswordTextField().getValue())) {
-            registerScreen.getPasswordTextField().setInvalid(true);
+    private fun showErrorRequiredFields() {
+        if (registerView.usernameTextField.value.isBlank()) {
+            registerView.usernameTextField.isInvalid = true
         }
-    }
-
-    private void registerUser(@Autowired AccessControl accessControl, @Autowired EncryptionService encryptionService) {
-        try {
-            final String salt = encryptionService.generateSalt();
-            final String
-                    encryptedPassword =
-                    encryptionService.getEncryptedPassword(registerScreen.getPasswordTextField().getValue(), salt);
-            final boolean
-                    successfull =
-                    accessControl.register(registerScreen.getUsernameTextField().getValue(),
-                                           encryptedPassword,
-                                           salt,
-                                           registerScreen.getFirstnameTextField().getValue(),
-                                           registerScreen.getLastnameTextField().getValue(),
-                                           encryptionService.getAccessToken());
-            if (!successfull) {
-                registerScreen.getErrorLabel().setVisible(true);
-            } else {
-                registerScreen.getMailService().sendConfirmationMail();
-                accessControl.signIn(registerScreen.getUsernameTextField().getValue(), encryptedPassword, true);
-                registerScreen.getUI().get().navigate("");
-            }
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            e.printStackTrace();
+        if (registerView.passwordTextField.value.isBlank()) {
+            registerView.passwordTextField.isInvalid = true
         }
     }
 
-    private boolean allRequiredFieldsFilled() {
-        return StringUtils.isNotBlank(registerScreen.getUsernameTextField().getValue()) &&
-               StringUtils.isNotBlank(registerScreen.getPasswordTextField().getValue());
+    private fun registerUser(@Autowired accessControl: AccessControl, @Autowired encryptionService: EncryptionService) {
+        val salt = encryptionService.generateSalt()
+        val encryptedPassword = encryptionService.getEncryptedPassword(registerView.passwordTextField.value, salt)
+        val successfull = accessControl.register(registerView.usernameTextField.value,
+                encryptedPassword,
+                salt,
+                registerView.firstnameTextField.value,
+                registerView.lastnameTextField.value,
+                encryptionService.accessToken)
+
+        if (!successfull) {
+            registerView.errorLabel.isVisible = true
+        } else {
+            registerView.mailService.sendConfirmationMail()
+            accessControl.signIn(registerView.usernameTextField.value, encryptedPassword, true)
+            registerView.ui.get().navigate("")
+        }
     }
+
+    private fun allRequiredFieldsFilled(): Boolean {
+        return registerView.usernameTextField.value.isNotBlank() &&
+                registerView.passwordTextField.value.isNotBlank()
+    }
+
 }

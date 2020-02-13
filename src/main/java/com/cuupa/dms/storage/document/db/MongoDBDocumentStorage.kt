@@ -1,10 +1,7 @@
-package com.cuupa.dms.storage.document.db;
+package com.cuupa.dms.storage.document.db
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.MongoRepository
 
-import java.util.List;
-
-public interface MongoDBDocumentStorage extends MongoRepository<DBDocument, Long> {
-
-    List<DBDocument> findDocumentsByOwner(String owner);
+interface MongoDBDocumentStorage : MongoRepository<DBDocument?, Long?> {
+    fun findDocumentsByOwner(owner: String?): List<DBDocument?>
 }

@@ -1,16 +1,11 @@
-package com.cuupa.dms.database.user;
+package com.cuupa.dms.database.user
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.CrudRepository
 
-public interface UserRepository extends CrudRepository<DbUser, Integer> {
-
-    DbUser findByUsername(String username);
-
-    DbUser findByUsernameAndAccesstoken(String username, String accessToken);
-
-    DbUser findByUsernameAndPassword(String username, String password);
-
-    DbUser save(DbUser user);
-
-    boolean existsUserByUsername(String username);
+interface UserRepository : CrudRepository<DbUser?, Int?> {
+    fun findByUsername(username: String): DbUser?
+    fun findByUsernameAndAccesstoken(username: String, accessToken: String): DbUser?
+    fun findByUsernameAndPassword(username: String, password: String): DbUser?
+    fun save(user: DbUser): DbUser?
+    fun existsUserByUsername(username: String): Boolean
 }

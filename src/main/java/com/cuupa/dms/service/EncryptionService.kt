@@ -1,41 +1,49 @@
-package com.cuupa.dms.service;
+package com.cuupa.dms.service
 
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
-import java.util.Base64;
+import java.security.NoSuchAlgorithmException
+import java.security.SecureRandom
+import java.security.spec.InvalidKeySpecException
+import java.security.spec.KeySpec
+import java.util.*
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.PBEKeySpec
 
-public class EncryptionService {
+class EncryptionService {
 
-    private static final String algorithm = "PBKDF2WithHmacSHA1";
+    val decoder = Base64.getDecoder()
 
-    private static final int derivedKeyLength = 160; // for SHA1
+    val encoder = Base64.getEncoder()
 
-    private static final int iterations = 20000; // NIST specifies 10000
-
-    public String getEncryptedPassword(String password, String salt) throws InvalidKeySpecException, NoSuchAlgorithmException {
-        byte[] saltBytes = Base64.getDecoder().decode(salt);
-        KeySpec spec = new PBEKeySpec(password.toCharArray(), saltBytes, iterations, derivedKeyLength);
-        SecretKeyFactory f = SecretKeyFactory.getInstance(algorithm);
-
-        byte[] encBytes = f.generateSecret(spec).getEncoded();
-        return Base64.getEncoder().encodeToString(encBytes);
+    @Throws(InvalidKeySpecException::class, NoSuchAlgorithmException::class)
+    fun getEncryptedPassword(password: String, salt: String): String {
+        val saltBytes = decoder.decode(salt)
+        val spec: KeySpec = PBEKeySpec(password.toCharArray(), saltBytes, iterations, derivedKeyLength)
+        val f = SecretKeyFactory.getInstance(algorithm)
+        val encBytes = f.generateSecret(spec).encoded
+        return encoder.encodeToString(encBytes)
     }
 
-    public String generateSalt() throws NoSuchAlgorithmException {
-        SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-        byte[] salt = new byte[8];
-        random.nextBytes(salt);
-        return Base64.getEncoder().encodeToString(salt);
+    @Throws(NoSuchAlgorithmException::class)
+    fun generateSalt(): String {
+        val random = SecureRandom.getInstance(hashAlgorithm)
+        val salt = ByteArray(8)
+        random.nextBytes(salt)
+        return encoder.encodeToString(salt)
     }
 
-    public String getAccessToken() throws NoSuchAlgorithmException {
-        SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
-        byte[] randomBytes = new byte[24];
-        random.nextBytes(randomBytes);
-        return Base64.getEncoder().encodeToString(randomBytes);
+    @get:Throws(NoSuchAlgorithmException::class)
+    val accessToken: String
+        get() {
+            val random = SecureRandom.getInstance(hashAlgorithm)
+            val randomBytes = ByteArray(24)
+            random.nextBytes(randomBytes)
+            return Base64.getEncoder().encodeToString(randomBytes)
+        }
+
+    companion object {
+        private const val hashAlgorithm = "SHA1PRNG"
+        private const val algorithm = "PBKDF2WithHmacSHA1"
+        private const val derivedKeyLength = 160 // for SHA1
+        private const val iterations = 20000 // NIST specifies 10000
     }
 }

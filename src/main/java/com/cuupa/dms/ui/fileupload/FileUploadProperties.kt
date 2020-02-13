@@ -1,90 +1,75 @@
-package com.cuupa.dms.ui.fileupload;
+package com.cuupa.dms.ui.fileupload
 
-import com.vaadin.flow.component.datepicker.DatePicker;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.timepicker.TimePicker;
+import com.cuupa.dms.UIConstants
+import com.vaadin.flow.component.datepicker.DatePicker
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout
+import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import com.vaadin.flow.component.textfield.TextField
+import com.vaadin.flow.component.timepicker.TimePicker
+import java.time.LocalDate
+import java.time.LocalTime
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.Arrays;
-import java.util.List;
+class FileUploadProperties : VerticalLayout() {
 
-public class FileUploadProperties extends VerticalLayout {
+    private val filename = TextField("Filename")
+    private val from = TextField("From")
+    private val date = DatePicker("Date")
+    private val time = TimePicker("Time")
+    private val tags = TextField("Tags")
 
-    private final TextField filename = new TextField("Filename");
+    var content = ByteArray(0)
 
-    private final TextField from = new TextField("From");
-
-    private final DatePicker date = new DatePicker("Date");
-
-    private final TimePicker time = new TimePicker("Time");
-
-    private final TextField tags = new TextField("Tags");
-
-    private byte[] content = new byte[0];
-
-
-    public FileUploadProperties() {
-        filename.setMinWidth("100%");
-        from.setMinWidth("100%");
-        date.setMinWidth("50%");
-        time.setMinWidth("50%");
-        tags.setMinWidth("100%");
-        add(filename, from);
-        final HorizontalLayout horizontalLayout = new HorizontalLayout();
-        horizontalLayout.setWidth("100%");
-        horizontalLayout.add(date, time);
-        add(horizontalLayout, tags);
-        setSizeFull();
+    fun getFilename(): String {
+        return filename.value
     }
 
-    public String getFilename() {
-        return this.filename.getValue();
+    fun setFilename(filename: String) {
+        this.filename.value = filename
     }
 
-    public void setFilename(String filename) {
-        this.filename.setValue(filename);
+    fun getFrom(): String {
+        return from.value
     }
 
-    public String getFrom() {
-        return this.from.getValue();
+    fun setFrom(from: String?) {
+        this.from.value = from
     }
 
-    public void setFrom(String from) {
-        this.from.setValue(from);
+    fun getDate(): LocalDate {
+        return date.value
     }
 
-    public LocalDate getDate() {
-        return this.date.getValue();
+    fun setDate(date: LocalDate) {
+        this.date.value = date
     }
 
-    public void setDate(LocalDate date) {
-        this.date.setValue(date);
+    fun getTime(): LocalTime {
+        return time.value
     }
 
-    public LocalTime getTime() {
-        return this.time.getValue();
+    fun setTime(time: LocalTime) {
+        this.time.value = time
     }
 
-    public void setTime(LocalTime time) {
-        this.time.setValue(time);
+    fun getTags(): List<String> {
+        return listOf(*tags.value.split(",").toTypedArray())
     }
 
-    public List<String> getTags() {
-        return Arrays.asList(this.tags.getValue().split(","));
+    fun setTags(tags: List<String>) {
+        this.tags.value = java.lang.String.join(",", tags)
     }
 
-    public void setTags(List<String> tags) {
-        this.tags.setValue(String.join(",", tags));
-    }
+    init {
+        filename.minWidth = UIConstants.maxSize
+        from.minWidth = UIConstants.maxSize
+        date.minWidth = UIConstants.halfSize
+        time.minWidth = UIConstants.halfSize
+        tags.minWidth = UIConstants.maxSize
+        add(filename, from)
 
-    public byte[] getContent() {
-        return content;
-    }
-
-    public void setContent(byte[] content) {
-        this.content = content;
+        val horizontalLayout = HorizontalLayout(date, time)
+        horizontalLayout.width = UIConstants.maxSize
+        add(horizontalLayout, tags)
+        setSizeFull()
     }
 }

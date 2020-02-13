@@ -149,6 +149,12 @@
           <element id="library" level="project" name="Maven: org.springframework:spring-web:5.2.3.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.boot:spring-boot:2.2.4.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.boot:spring-boot-autoconfigure:2.2.4.RELEASE" />
+          <element id="library" level="project" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.61" />
+          <element id="library" level="project" name="Maven: org.jetbrains.kotlin:kotlin-stdlib:1.3.61" />
+          <element id="library" level="project" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.61" />
+          <element id="library" level="project" name="Maven: org.jetbrains:annotations:13.0" />
+          <element id="library" level="project" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.61" />
+          <element id="library" level="project" name="Maven: org.jetbrains.kotlin:kotlin-reflect:1.3.61" />
         </element>
       </element>
       <element id="directory" name="META-INF">

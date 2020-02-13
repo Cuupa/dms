@@ -1,13 +1,14 @@
-package com.cuupa.dms.ui;
+package com.cuupa.dms.ui
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
-public class LocalDateTimeFormatter {
+class LocalDateTimeFormatter {
+    fun format(localDateTime: LocalDateTime): String {
+        return localDateTime.format(formatter)
+    }
 
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm");
-
-    public String format(LocalDateTime localDateTime) {
-        return localDateTime.format(formatter);
+    companion object {
+        private val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy - HH:mm")
     }
 }

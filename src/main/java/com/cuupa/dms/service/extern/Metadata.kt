@@ -1,26 +1,9 @@
-package com.cuupa.dms.service.extern;
+package com.cuupa.dms.service.extern
 
-public class Metadata {
+data class Metadata(val name: String, val value: String) {
 
-    private final String name;
-
-    private final String value;
-
-    public Metadata(String name, String value) {
-        this.name = name;
-        this.value = value;
+    override fun toString(): String {
+        return "name: $name value: $value"
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    @Override
-    public String toString() {
-        return "name: " + name + " value: " + value;
-    }
 }

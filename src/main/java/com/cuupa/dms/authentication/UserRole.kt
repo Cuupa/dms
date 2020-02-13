@@ -1,4 +1,3 @@
-package com.cuupa.dms.authentication;
+package com.cuupa.dms.authentication
 
-public enum UserRole {
-}
+enum class UserRole

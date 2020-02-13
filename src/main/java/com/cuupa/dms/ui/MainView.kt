@@ -1,133 +1,127 @@
-package com.cuupa.dms.ui;
+package com.cuupa.dms.ui
 
-import com.cuupa.dms.authentication.AccessControl;
-import com.cuupa.dms.ui.fileupload.FileUploadOverview;
-import com.cuupa.dms.ui.overview.DocumentsOverview;
-import com.cuupa.dms.ui.settings.UserSettings;
-import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.applayout.AppLayout;
-import com.vaadin.flow.component.applayout.DrawerToggle;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.RouterLayout;
-import com.vaadin.flow.router.RouterLink;
-import com.vaadin.flow.server.PWA;
-import com.vaadin.flow.theme.Theme;
-import com.vaadin.flow.theme.lumo.Lumo;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.cuupa.dms.UIConstants
+import com.cuupa.dms.authentication.AccessControl
+import com.cuupa.dms.ui.fileupload.FileUploadOverview
+import com.cuupa.dms.ui.overview.DocumentsOverview
+import com.cuupa.dms.ui.settings.UserSettings
+import com.vaadin.flow.component.Component
+import com.vaadin.flow.component.ComponentEventListener
+import com.vaadin.flow.component.UI
+import com.vaadin.flow.component.applayout.AppLayout
+import com.vaadin.flow.component.applayout.DrawerToggle
+import com.vaadin.flow.component.button.Button
+import com.vaadin.flow.component.dependency.CssImport
+import com.vaadin.flow.component.html.Label
+import com.vaadin.flow.component.html.Span
+import com.vaadin.flow.component.icon.Icon
+import com.vaadin.flow.component.icon.VaadinIcon
+import com.vaadin.flow.component.orderedlayout.FlexComponent
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout
+import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import com.vaadin.flow.router.RouterLayout
+import com.vaadin.flow.router.RouterLink
+import com.vaadin.flow.server.PWA
+import com.vaadin.flow.theme.Theme
+import com.vaadin.flow.theme.lumo.Lumo
+import org.springframework.beans.factory.annotation.Autowired
 
 /**
  * A sample Vaadin view class.
- * <p>
+ *
+ *
  * To implement a Vaadin view just extend any Vaadin component and
  * use @Route annotation to announce it in a URL as a Spring managed
  * bean.
  * Use the @PWA annotation make the application installable on phones,
  * tablets and some desktop browsers.
- * <p>
+ *
+ *
  * A new instance of this class is created for every new user and every
  * browser tab/window.
  */
 @PWA(name = "Vaadin Application", shortName = "Vaadin App", description = "This is an example Vaadin application.", enableInstallPrompt = true)
 @CssImport("./styles/shared-styles.css")
-@CssImport(value = "./styles/vaadin-text-field-styles.css", themeFor = "vaadin-text-field")
-@Theme(Lumo.class)
-public class MainView extends AppLayout implements RouterLayout {
+//@CssImport(value = "./styles/vaadin-text-field-styles.css", themeFor = "vaadin-text-field")
+@Theme(Lumo::class)
+class MainView(@Autowired accessControl: AccessControl) : AppLayout(), RouterLayout {
 
-    public static final String TITLE = "Documents";
-
-    public MainView(@Autowired final AccessControl accessControl) {
-
-        createMenuToggle();
-
-        Button logoutButton = createLogoutButton(accessControl);
-        Button uploadButton = createUploadButton();
-        Button userButton = createUserButton();
-        final HorizontalLayout buttonLayout = new HorizontalLayout();
-        buttonLayout.add(uploadButton, userButton, logoutButton);
-        buttonLayout.setFlexGrow(1, uploadButton, userButton, logoutButton);
-        final HorizontalLayout top = createMenuHeader();
-        Label title = createTitle();
-        top.add(title, buttonLayout);
-        top.setFlexGrow(1, title);
-        top.setMinWidth("95%");
-
-        addToNavbar(top);
-        // Use custom CSS classes to apply styling. This is defined in shared-styles.css.
-        //addClassName("centered-content");
-        final VerticalLayout menuLayout = new VerticalLayout();
-        menuLayout.add(createMenuLink(Inbox.class, Inbox.VIEW_NAME, VaadinIcon.INBOX.create()));
-        menuLayout.add(createMenuLink(DocumentsOverview.class,
-                                      DocumentsOverview.VIEW_NAME,
-                                      VaadinIcon.MAILBOX.create()));
-        menuLayout.add(createMenuLink(AdressesOverview.class,
-                                      AdressesOverview.VIEW_NAME,
-                                      VaadinIcon.USER_CARD.create()));
-
-
-        addToDrawer(menuLayout);
+    private fun createUserButton(): Button {
+        val userButton = Button(UIConstants.settings, VaadinIcon.USER.create())
+        userButton.addClickListener { userButton.ui.ifPresent { ui: UI -> ui.navigate(UserSettings.VIEW_NAME) } }
+        return userButton
     }
 
-    private Button createUserButton() {
-        Button userButton = new Button("Settings");
-        userButton.setIcon(VaadinIcon.USER.create());
-        userButton.addClickListener(event -> userButton.getUI().ifPresent(ui -> ui.navigate(UserSettings.VIEW_NAME)));
-        return userButton;
+    private fun createUploadButton(): Button {
+        val uploadButton = Button(UIConstants.upload, VaadinIcon.UPLOAD.create(), ComponentEventListener { })
+        uploadButton.addClickListener {
+            uploadButton.ui
+                    .ifPresent { ui: UI -> ui.navigate(FileUploadOverview.VIEW_NAME) }
+        }
+        return uploadButton
     }
 
-    private Button createUploadButton() {
-        Button uploadButton = new Button("Upload");
-        uploadButton.setIcon(VaadinIcon.UPLOAD.create());
-        uploadButton.addClickListener(event -> uploadButton.getUI()
-                                                           .ifPresent(ui -> ui.navigate(FileUploadOverview.VIEW_NAME)));
-        return uploadButton;
+    private fun createLogoutButton(accessControl: AccessControl): Button {
+        val logoutButton = Button("Logout", ComponentEventListener { accessControl.singOut() })
+        logoutButton.icon = VaadinIcon.SIGN_OUT.create()
+        return logoutButton
     }
 
-    private Button createLogoutButton(final AccessControl accessControl) {
-        Button logoutButton = new Button("Logout", e -> accessControl.singOut());
-        logoutButton.setIcon(VaadinIcon.SIGN_OUT.create());
-        return logoutButton;
+    private fun createTitle(): Label {
+        val menuLayout = HorizontalLayout()
+        menuLayout.defaultVerticalComponentAlignment = FlexComponent.Alignment.START
+        return Label(TITLE)
     }
 
-    private Label createTitle() {
-        final HorizontalLayout menuLayout = new HorizontalLayout();
-        menuLayout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.START);
-        //final Image image = new Image(resolvedImage, "");
-        return new Label(TITLE);
+    private fun createMenuHeader(): HorizontalLayout {
+        val top = HorizontalLayout()
+        top.defaultVerticalComponentAlignment = FlexComponent.Alignment.CENTER
+        top.className = "menu-header"
+        return top
     }
 
-    private HorizontalLayout createMenuHeader() {
-        final HorizontalLayout top = new HorizontalLayout();
-        top.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
-        top.setClassName("menu-header");
-        return top;
+    private fun createMenuLink(viewClass: Class<out Component?>, caption: String, icon: Icon): RouterLink {
+        val routerLink = RouterLink(null, viewClass)
+        routerLink.className = "menu-link"
+        routerLink.add(icon)
+        routerLink.add(Span(caption))
+        icon.setSize("24px")
+        return routerLink
     }
 
-    private RouterLink createMenuLink(final Class<? extends Component> viewClass, final String caption, final Icon icon) {
-        final RouterLink routerLink = new RouterLink(null, viewClass);
-        routerLink.setClassName("menu-link");
-        routerLink.add(icon);
-        routerLink.add(new Span(caption));
-        icon.setSize("24px");
-        return routerLink;
+    private fun createMenuToggle() {
+        val drawerToggle = DrawerToggle()
+        drawerToggle.addClassName("menu-toggle")
+        addToNavbar(drawerToggle)
     }
 
-    @Override
-    protected void onAttach(AttachEvent attachEvent) {
-        super.onAttach(attachEvent);
+    companion object {
+        const val TITLE = "Documents"
     }
 
-    private void createMenuToggle() {
-        final DrawerToggle drawerToggle = new DrawerToggle();
-        drawerToggle.addClassName("menu-toggle");
-        addToNavbar(drawerToggle);
+    init {
+        createMenuToggle()
+        val logoutButton = createLogoutButton(accessControl)
+        val uploadButton = createUploadButton()
+        val userButton = createUserButton()
+        val buttonLayout = HorizontalLayout()
+        buttonLayout.add(uploadButton, userButton, logoutButton)
+        buttonLayout.setFlexGrow(1.0, uploadButton, userButton, logoutButton)
+        val top = createMenuHeader()
+        val title = createTitle()
+        top.add(title, buttonLayout)
+        top.setFlexGrow(1.0, title)
+        top.minWidth = "95%"
+        addToNavbar(top)
+
+        val menuLayout = VerticalLayout()
+        menuLayout.add(createMenuLink(Inbox::class.java, Inbox.VIEW_NAME, VaadinIcon.INBOX.create()))
+        menuLayout.add(createMenuLink(DocumentsOverview::class.java,
+                DocumentsOverview.VIEW_NAME,
+                VaadinIcon.MAILBOX.create()))
+        menuLayout.add(createMenuLink(AdressesOverview::class.java,
+                AdressesOverview.VIEW_NAME,
+                VaadinIcon.USER_CARD.create()))
+        addToDrawer(menuLayout)
     }
 }

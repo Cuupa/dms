@@ -1,14 +1,10 @@
-package com.cuupa.dms.storage.tag.db;
+package com.cuupa.dms.storage.tag.db
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.MongoRepository
 
-import java.util.List;
+interface MongoDBTagStorage : MongoRepository<DBTag?, Long?> {
 
-public interface MongoDBTagStorage extends MongoRepository<DBTag, Long> {
-
-    List<DBTag> findTagsByOwner(String owner);
-
+    fun findTagsByOwner(owner: String): List<DBTag>
     //DBTag findTagById(long id);
-
-    DBTag findTagByNameAndOwner(String name, String owner);
+    fun findTagByNameAndOwner(name: String, owner: String?): DBTag?
 }

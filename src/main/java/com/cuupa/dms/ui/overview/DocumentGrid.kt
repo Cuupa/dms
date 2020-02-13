@@ -1,54 +1,48 @@
-package com.cuupa.dms.ui.overview;
+package com.cuupa.dms.ui.overview
 
-import com.cuupa.dms.storage.document.Document;
-import com.cuupa.dms.storage.tag.Tag;
-import com.cuupa.dms.ui.LocalDateTimeFormatter;
-import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.page.Push;
-import com.vaadin.flow.router.Route;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.stream.Collectors;
+import com.cuupa.dms.storage.document.Document
+import com.cuupa.dms.storage.tag.Tag
+import com.cuupa.dms.ui.LocalDateTimeFormatter
+import com.vaadin.flow.component.AttachEvent
+import com.vaadin.flow.component.UI
+import com.vaadin.flow.component.grid.Grid
+import com.vaadin.flow.component.page.Push
+import com.vaadin.flow.router.Route
+import org.apache.commons.lang3.StringUtils
+import java.util.stream.Collectors
 
 @Push
 @Route("push")
-public class DocumentGrid extends Grid<Document> {
+class DocumentGrid : Grid<Document>() {
 
-    private static final LocalDateTimeFormatter dateFormatter = new LocalDateTimeFormatter();
+    private fun addContent() {
+        addColumn(Document::name).setHeader("Filename").setFlexGrow(20).setSortable(true).key = "name"
+        addColumn(Document::sender).setHeader("From").setFlexGrow(20).setSortable(true).key = "sender"
+        addColumn { (_, _, _, _, createDate) -> dateFormatter.format(createDate) }.setHeader("Date")
+                .setFlexGrow(20)
+                .setSortable(true).key = "createDate"
+        addColumn { document: Document -> getTaglist(document) }.setFlexGrow(20).setHeader("Tags").setSortable(true).key = "tags"
+    }
 
-    public DocumentGrid() {
-        setSizeFull();
-        addContent();
+    private fun getTaglist(document: Document): String {
+        val tags = document.tags.stream().map(Tag::name).sorted().collect(Collectors.joining(", "))
+        return if (StringUtils.isEmpty(tags)) {
+            ""
+        } else tags
+    }
+
+    override fun onAttach(attachEvent: AttachEvent) {
+        super.onAttach(attachEvent)
+        UI.getCurrent().internals.extendedClientDetails = null
+    }
+
+    companion object {
+        private val dateFormatter = LocalDateTimeFormatter()
+    }
+
+    init {
+        setSizeFull()
+        addContent()
         //UI.getCurrent().getPage().addBrowserWindowResizeListener(e -> setCustomVisibility(e.getWidth()));
     }
-
-
-    private void addContent() {
-        addColumn(Document::getName).setHeader("Filename").setFlexGrow(20).setSortable(true).setKey("name");
-        addColumn(Document::getSender).setHeader("From").setFlexGrow(20).setSortable(true).setKey("sender");
-        addColumn(document -> dateFormatter.format(document.getCreateDate())).setHeader("Date")
-                                                                             .setFlexGrow(20)
-                                                                             .setSortable(true)
-                                                                             .setKey("createDate");
-        addColumn(this::getTaglist).setFlexGrow(20).setHeader("Tags").setSortable(true).setKey("tags");
-    }
-
-    private String getTaglist(Document document) {
-        String tags = document.getTags().stream().map(Tag::getName).sorted().collect(Collectors.joining(", "));
-        if (StringUtils.isEmpty(tags)) {
-            return "";
-        }
-
-        return tags;
-    }
-
-    @Override
-    protected void onAttach(AttachEvent attachEvent) {
-        super.onAttach(attachEvent);
-
-        UI.getCurrent().getInternals().setExtendedClientDetails(null);
-    }
-
 }

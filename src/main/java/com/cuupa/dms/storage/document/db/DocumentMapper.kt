@@ -1,36 +1,29 @@
-package com.cuupa.dms.storage.document.db;
+package com.cuupa.dms.storage.document.db
 
-import com.cuupa.dms.storage.document.Document;
-import com.cuupa.dms.storage.tag.Tag;
+import com.cuupa.dms.storage.document.Document
+import com.cuupa.dms.storage.tag.Tag
+import java.util.stream.Collectors
 
-import java.util.stream.Collectors;
+object DocumentMapper {
 
-public class DocumentMapper {
-
-    public static DBDocument mapToEntity(Document document) {
-        DBDocument
-                documentEntity =
-                new DBDocument(document.getFilename(),
-                               document.getName(),
-                               document.getSender(),
-                               document.getOwner(),
-                               document.getCreateDate(),
-                               document.getTags().stream().map(Tag::getName).collect(Collectors.toList()));
-        return documentEntity;
+    fun mapToEntity(document: Document): DBDocument {
+        return DBDocument(document.filename,
+                document.name,
+                document.sender,
+                document.owner,
+                document.createDate,
+                document.tags.stream().map(Tag::name).collect(Collectors.toList()))
     }
 
-    public static Document mapToGuiObject(DBDocument document) {
-        Document
-                uiDocument =
-                new com.cuupa.dms.storage.document.Document(document.getFilename(),
-                                                            document.getName(),
-                                                            document.getSender(),
-                                                            document.getOwner(),
-                                                            document.getCreateDate(),
-                                                            document.getTags()
-                                                                    .stream()
-                                                                    .map(tag -> new Tag(tag, document.getOwner()))
-                                                                    .collect(Collectors.toList()));
-        return uiDocument;
+    fun mapToGuiObject(document: DBDocument): Document {
+        return Document(document.filename,
+                document.name,
+                document.sender,
+                document.owner,
+                document.createDate,
+                document.tags
+                        .stream()
+                        .map { tag: String? -> Tag(tag!!, document.owner) }
+                        .collect(Collectors.toList()))
     }
 }

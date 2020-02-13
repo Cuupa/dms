@@ -1,88 +1,57 @@
-package com.cuupa.dms.ui.fileupload;
+package com.cuupa.dms.ui.fileupload
 
-import com.cuupa.dms.Constants;
-import com.cuupa.dms.storage.StorageService;
-import com.cuupa.dms.storage.document.Document;
-import com.cuupa.dms.storage.tag.Tag;
+import com.cuupa.dms.Constants
+import com.cuupa.dms.storage.StorageService
+import com.cuupa.dms.storage.document.Document
+import com.cuupa.dms.storage.tag.Tag
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.StandardOpenOption
+import java.time.LocalDateTime
+import java.util.stream.Collectors
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
+class DocumentSaveUtil(private val properties: FileUploadProperties, private val storageService: StorageService, private val username: String) {
 
-public class DocumentSaveUtil {
-
-    private final FileUploadProperties properties;
-
-    private final StorageService storageService;
-
-    private final String username;
-
-    protected DocumentSaveUtil(FileUploadProperties properties, StorageService storageService, String username) {
-        this.properties = properties;
-        this.storageService = storageService;
-        this.username = username;
+    fun save() {
+        val path = writeFile()
+        path?.let { writeDatabase(it) }
     }
 
-    public void save() {
-        Path path = writeFile();
-        if (path != null) {
-            writeDatabase(path);
+    private fun writeDatabase(path: Path) {
+        storageService.save(Document(path.toString(),
+                properties.getFilename().trim { it <= ' ' },
+                properties.getFrom().trim { it <= ' ' },
+                username,
+                LocalDateTime.of(properties.getDate(), properties.getTime()),
+                properties.getTags().map { name: String -> Tag(name) }))
+    }
+
+    private fun writeFile(): Path? {
+        val path = Paths.get(Constants.DOCUMENTFOLDER +
+                File.separator +
+                username +
+                File.separator +
+                properties.getFilename())
+        if (!path.toFile().exists()) {
+            path.toFile().mkdirs()
         }
+        val finalPath = findFinalFilepath(path)
+        Files.write(finalPath, properties.content, StandardOpenOption.CREATE_NEW)
+        return finalPath
     }
 
-    private void writeDatabase(Path path) {
-        storageService.save(new Document(path.toString(),
-                                         properties.getFilename().trim(),
-                                         properties.getFrom().trim(),
-                                         username,
-                                         LocalDateTime.of(properties.getDate(), properties.getTime()),
-                                         properties.getTags().stream().map(Tag::new).collect(Collectors.toList())));
-    }
-
-    private Path writeFile() {
-        try {
-            Path
-                    path =
-                    Paths.get(Constants.DOCUMENTFOLDER +
-                              File.separator +
-                              username +
-                              File.separator +
-                              properties.getFilename());
-            if (!path.toFile().exists()) {
-                path.toFile().mkdirs();
+    private fun findFinalFilepath(path: Path): Path {
+        val list = Files.list(path).collect(Collectors.toList())
+        var maxFoundFilename = 0
+        list.forEach { foundPath ->
+            val foundFilename = foundPath.fileName.toString().split("\\p{Punct}".toRegex()).toTypedArray()[0]
+            val currentFilename = foundFilename.toInt()
+            if (currentFilename > maxFoundFilename) {
+                maxFoundFilename = currentFilename
             }
-            Path finalPath = findFinalFilepath(path);
-            System.out.println(finalPath);
-            Files.write(finalPath, properties.getContent(), StandardOpenOption.CREATE_NEW);
-            return finalPath;
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        return null;
-    }
-
-    private Path findFinalFilepath(Path path) {
-        try {
-            final List<Path> list = Files.list(path).collect(Collectors.toList());
-            int maxFoundFilename = 0;
-            for (Path foundPath : list) {
-                final String foundFilename = foundPath.getFileName().toString().split("\\.")[0];
-                final int currentFilename = Integer.parseInt(foundFilename);
-                if (currentFilename > maxFoundFilename) {
-                    maxFoundFilename = currentFilename;
-                }
-            }
-            System.out.println(list);
-            return new File(path.toFile().getAbsolutePath(), ++maxFoundFilename + ".pdf").toPath();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new File(path.toFile().getAbsolutePath(), "1.pdf").toPath();
+        return File(path.toFile().absolutePath, maxFoundFilename.inc().toString() + ".pdf").toPath()
     }
 }

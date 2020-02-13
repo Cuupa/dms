@@ -1,37 +1,27 @@
-package com.cuupa.dms.controller;
+package com.cuupa.dms.controller
 
-import com.cuupa.dms.authentication.AccessControl;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.cuupa.dms.authentication.AccessControl
+import org.apache.commons.lang3.StringUtils
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import java.util.*
 
-import java.util.Optional;
+class UploadValidator(@param:Autowired private val accessControl: AccessControl) {
 
-public class UploadValidator {
-
-    private final AccessControl accessControl;
-
-    public UploadValidator(@Autowired AccessControl accessControl) {
-        this.accessControl = accessControl;
-    }
-
-    public Optional<ResponseEntity<String>> validate(String accessToken, String username, String filename, byte[] content) {
-        if (StringUtils.isBlank(accessToken) || StringUtils.isBlank(username)) {
-            return Optional.of(ResponseEntity.status(HttpStatus.FORBIDDEN).body("Forbidden"));
+    fun validate(accessToken: String?, username: String?, filename: String?, content: ByteArray?): Optional<ResponseEntity<String>> {
+        if (accessToken.isNullOrBlank() || username.isNullOrBlank()) {
+            return Optional.of(ResponseEntity.status(HttpStatus.FORBIDDEN).body("Forbidden"))
         }
-
         if (!accessControl.signIn(username, accessToken)) {
-            return Optional.of(ResponseEntity.status(HttpStatus.FORBIDDEN).body("Forbidden"));
+            return Optional.of(ResponseEntity.status(HttpStatus.FORBIDDEN).body("Forbidden"))
         }
-
         if (StringUtils.isBlank(filename)) {
-            return Optional.of(ResponseEntity.status(HttpStatus.NO_CONTENT).body("No filename specified"));
+            return Optional.of(ResponseEntity.status(HttpStatus.NO_CONTENT).body("No filename specified"))
         }
-
-        if (content == null || content.length == 0) {
-            return Optional.of(ResponseEntity.status(HttpStatus.NO_CONTENT).body("No document"));
-        }
-        return Optional.empty();
+        return if (content == null || content.isEmpty()) {
+            Optional.of(ResponseEntity.status(HttpStatus.NO_CONTENT).body("No document"))
+        } else Optional.empty()
     }
+
 }

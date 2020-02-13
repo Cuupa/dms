@@ -1,95 +1,75 @@
-package com.cuupa.dms.storage;
+package com.cuupa.dms.storage
 
-import com.cuupa.dms.storage.document.Document;
-import com.cuupa.dms.storage.document.db.DBDocument;
-import com.cuupa.dms.storage.document.db.DocumentMapper;
-import com.cuupa.dms.storage.document.db.MongoDBDocumentStorage;
-import com.cuupa.dms.storage.tag.Tag;
-import com.cuupa.dms.storage.tag.db.DBTag;
-import com.cuupa.dms.storage.tag.db.MongoDBTagStorage;
-import org.apache.commons.lang3.StringUtils;
+import com.cuupa.dms.storage.document.Document
+import com.cuupa.dms.storage.document.db.DBDocument
+import com.cuupa.dms.storage.document.db.DocumentMapper
+import com.cuupa.dms.storage.document.db.MongoDBDocumentStorage
+import com.cuupa.dms.storage.tag.Tag
+import com.cuupa.dms.storage.tag.db.DBTag
+import com.cuupa.dms.storage.tag.db.MongoDBTagStorage
+import org.apache.commons.lang3.StringUtils
+import java.util.*
+import java.util.stream.Collectors
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+class StorageService(private val documentStorage: MongoDBDocumentStorage, private val tagStorage: MongoDBTagStorage) {
 
-public class StorageService {
-
-    private final MongoDBDocumentStorage documentStorage;
-
-    private final MongoDBTagStorage tagStorage;
-
-    public StorageService(MongoDBDocumentStorage documentStorage, MongoDBTagStorage tagStorage) {
-        this.documentStorage = documentStorage;
-        this.tagStorage = tagStorage;
+    fun deleteAll() {
+        documentStorage.deleteAll()
+        tagStorage.deleteAll()
     }
 
-    public void deleteAll() {
-        documentStorage.deleteAll();
-        tagStorage.deleteAll();
+    fun save(document: Document) {
+        val tags = document.tags
+        val tagsWithOwner = tags.map { tag: Tag -> tag.copy(owner = tag.owner) }
+        var tagsInDB = getTagsFromDB(tagsWithOwner)
+        saveNewTags(tags, tagsInDB)
+        document.tags = tags
+        val documentToSave = DocumentMapper.mapToEntity(document)
+        documentStorage.insert(documentToSave)
     }
 
-    public void save(Document document) {
-        List<Tag> tags = document.getTags();
-        tags.forEach(tag -> tag.setOwner(document.getOwner()));
-        tags.forEach(tag -> tag.setName(tag.getName().trim()));
-        List<DBTag> tagsInDB = getTagsFromDB(tags);
-
-        saveNewTags(tags, tagsInDB);
-        tagsInDB = getTagsFromDB(tags);
-        System.out.println(tagsInDB);
-        document.setTags(tags);
-        DBDocument documentToSave = DocumentMapper.mapToEntity(document);
-
-        documentStorage.insert(documentToSave);
-    }
-
-    private List<DBTag> getTagsFromDB(List<Tag> tags) {
+    private fun getTagsFromDB(tags: List<Tag>): List<DBTag?> {
         return tags.stream()
-                   .map(tag -> tagStorage.findTagByNameAndOwner(tag.getName(), tag.getOwner()))
-                   .filter(Objects::nonNull)
-                   .collect(Collectors.toList());
+                .map { tag: Tag -> tagStorage.findTagByNameAndOwner(tag.name, tag.owner) }
+                .filter { obj: DBTag? -> Objects.nonNull(obj) }
+                .collect(Collectors.toList())
     }
 
-
-    private void saveNewTags(List<Tag> tags, List<DBTag> tagsInDB) {
-        List<Tag>
-                filteredTags =
-                tags.stream()
-                    .filter(tag -> !tagsInDB.stream()
-                                            .map(tag1 -> tag.getName())
-                                            .collect(Collectors.toList())
-                                            .contains(tag.getName()))
-                    .filter(tag -> !tagsInDB.stream()
-                                            .map(tag1 -> tag.getOwner())
-                                            .collect(Collectors.toList())
-                                            .contains(tag.getOwner()))
-                    .collect(Collectors.toList());
-
-
-        List<DBTag>
-                collect =
-                filteredTags.stream().map(tag -> new DBTag(tag.getName(), tag.getOwner())).collect(Collectors.toList());
-        for (DBTag tag : collect) {
-            tagStorage.insert(tag);
+    private fun saveNewTags(tags: List<Tag>, tagsInDB: List<DBTag?>) {
+        val filteredTags = tags.stream()
+                .filter { tag: Tag ->
+                    !tagsInDB.stream()
+                            .map { tag.name }
+                            .collect(Collectors.toList())
+                            .contains(tag.name)
+                }
+                .filter { tag: Tag ->
+                    !tagsInDB.stream()
+                            .map { tag.owner }
+                            .collect(Collectors.toList())
+                            .contains(tag.owner)
+                }
+                .collect(Collectors.toList())
+        val collect = filteredTags.stream().map { tag: Tag -> DBTag(tag.name, tag.owner) }.collect(Collectors.toList())
+        for (tag in collect) {
+            tagStorage.insert(tag)
         }
     }
 
-    public List<Document> findDocumentsByOwner(String owner) {
-        if (StringUtils.isBlank(owner)) {
-            return new ArrayList<>();
-        }
-        return documentStorage.findDocumentsByOwner(owner)
-                              .stream()
-                              .map(DocumentMapper::mapToGuiObject)
-                              .collect(Collectors.toList());
+    fun findDocumentsByOwner(owner: String?): List<Document> {
+        return if (StringUtils.isBlank(owner)) {
+            ArrayList()
+        } else documentStorage.findDocumentsByOwner(owner).filterNotNull()
+                .stream()
+                .map { document: DBDocument? -> DocumentMapper.mapToGuiObject(document!!) }
+                .collect(Collectors.toList())
     }
 
-    public List<Tag> findTagsByOwner(String owner) {
+    fun findTagsByOwner(owner: String): List<Tag> {
         return tagStorage.findTagsByOwner(owner)
-                         .stream()
-                         .map(tag -> new Tag(tag.getName(), tag.getOwner()))
-                         .collect(Collectors.toList());
+                .stream()
+                .map { tag: DBTag -> Tag(tag.name, tag.owner) }
+                .collect(Collectors.toList())
     }
+
 }

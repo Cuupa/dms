@@ -1,24 +1,17 @@
-package com.cuupa.dms.authentication;
+package com.cuupa.dms.authentication
 
-import java.io.Serializable;
+import java.io.Serializable
 
-public interface AccessControl extends Serializable {
-
-    boolean signIn(final String username, final String password, final boolean alreadyHashed);
-
-    User getUser(String username);
-
-    boolean isUserSingedIn();
-
-    boolean isUserRole(final UserRole role);
-
-    String getPrincipalName();
-
-    void singOut();
-
-    boolean register(final String username, final String password, final String salt, final String firstname, final String lastname, final String accesstoken);
-
-    boolean save(User user);
-
-    boolean signIn(final String username, final String accessToken);
+interface AccessControl : Serializable {
+    fun signIn(username: String, password: String, alreadyHashed: Boolean): Boolean
+    fun getUser(username: String): User?
+    val isUserSingedIn: Boolean
+    fun isUserRole(role: UserRole?): Boolean
+    val principalName: String
+    fun singOut()
+    fun register(username: String, password: String, salt: String, firstname: String?, lastname: String?, accesstoken: String): Boolean
+    fun save(user: User, encryptedPassword: String, newSalt: String, accessToken: String): Boolean
+    fun signIn(username: String, accessToken: String): Boolean
+    fun save(user: User, accessToken: String): Boolean
+    fun getAccessToken(username: String): String
 }

@@ -1,8 +1,7 @@
-package com.cuupa.dms;
+package com.cuupa.dms
 
-public class Constants {
+object Constants {
 
-    public static final String FILTER_TEXT = "Filter name or topics";
-
-    public static final String DOCUMENTFOLDER = "documents";
+    const val FILTER_TEXT = "Filter name or topics"
+    const val DOCUMENTFOLDER = "documents"
 }

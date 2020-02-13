@@ -1,77 +1,67 @@
-package com.cuupa.dms.ui.overview;
+package com.cuupa.dms.ui.overview
 
-import com.cuupa.dms.storage.document.Document;
-import com.cuupa.dms.storage.tag.Tag;
-import com.vaadin.flow.component.datepicker.DatePicker;
-import com.vaadin.flow.component.listbox.MultiSelectListBox;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.timepicker.TimePicker;
+import com.cuupa.dms.UIConstants
+import com.cuupa.dms.storage.document.Document
+import com.cuupa.dms.storage.tag.Tag
+import com.vaadin.flow.component.datepicker.DatePicker
+import com.vaadin.flow.component.listbox.MultiSelectListBox
+import com.vaadin.flow.component.orderedlayout.FlexComponent
+import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout
+import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import com.vaadin.flow.component.textfield.TextField
+import com.vaadin.flow.component.timepicker.TimePicker
 
-import java.util.List;
+class DocumentPropertiesLayout : VerticalLayout() {
 
-public class DocumentPropertiesLayout extends VerticalLayout {
+    private val filename = TextField(UIConstants.filename)
+    private val sender = TextField(UIConstants.from)
+    private val date = DatePicker(UIConstants.date)
+    private val time = TimePicker(UIConstants.time)
+    private val tags = MultiSelectListBox<Tag>()
 
-    private final TextField filename = new TextField("Filename");
-
-    private final TextField sender = new TextField("From");
-
-    private final DatePicker date = new DatePicker("Date");
-
-    private final TimePicker time = new TimePicker("Time");
-
-    private final MultiSelectListBox<Tag> tags = new MultiSelectListBox<>();
-
-    public DocumentPropertiesLayout() {
-        setSizeFull();
-        setMinWidth("100%");
-        setHorizontalComponentAlignment(Alignment.CENTER);
-        setJustifyContentMode(JustifyContentMode.START);
-
-        final HorizontalLayout layoutFilename = new HorizontalLayout();
-        layoutFilename.setMinWidth("100%");
-        layoutFilename.setVerticalComponentAlignment(Alignment.CENTER);
-        layoutFilename.add(filename);
-        filename.setMinWidth("100%");
-        layoutFilename.setJustifyContentMode(JustifyContentMode.START);
-
-        final HorizontalLayout layoutSender = new HorizontalLayout();
-        layoutSender.setVerticalComponentAlignment(Alignment.CENTER);
-        layoutSender.setMinWidth("100%");
-        sender.setMinWidth("100%");
-        layoutSender.add(sender);
-        layoutSender.setJustifyContentMode(JustifyContentMode.START);
-
-        final HorizontalLayout layoutDateAndTime = new HorizontalLayout();
-        date.setMinWidth("50%");
-        time.setMinWidth("50%");
-        layoutDateAndTime.add(date, time);
-        layoutDateAndTime.setFlexGrow(1, date, time);
-
-        final HorizontalLayout layoutDate = new HorizontalLayout();
-        layoutDate.setMinWidth("100%");
-        layoutDate.setVerticalComponentAlignment(Alignment.CENTER);
-        layoutDate.add(layoutDateAndTime);
-        layoutDate.setJustifyContentMode(JustifyContentMode.START);
-
-        final HorizontalLayout layoutTags = new HorizontalLayout();
-        layoutTags.setVerticalComponentAlignment(Alignment.CENTER);
-        layoutTags.setMinWidth("100%");
-        tags.setMinWidth("100%");
-        layoutTags.add(tags);
-        layoutTags.setJustifyContentMode(JustifyContentMode.START);
-
-        add(layoutFilename, layoutSender, layoutDate, layoutTags);
+    fun setDocument(document: Document, tags: List<Tag>) {
+        filename.value = document.name
+        sender.value = document.sender
+        date.value = document.createDate.toLocalDate()
+        time.value = document.createDate.toLocalTime()
+        this.tags.setItems(tags)
+        //this.tags.updateSelection(new HashSet<>(document.getTags()), new HashSet<>());
+//this.tags.setValue();
     }
 
-    public void setDocument(final Document document, List<Tag> tags) {
-        this.filename.setValue(document.getName());
-        this.sender.setValue(document.getSender());
-        this.date.setValue(document.getCreateDate().toLocalDate());
-        this.time.setValue(document.getCreateDate().toLocalTime());
-        this.tags.setItems(tags);
-        //this.tags.updateSelection(new HashSet<>(document.getTags()), new HashSet<>());
-        //this.tags.setValue();
+    init {
+        setSizeFull()
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER)
+        justifyContentMode = JustifyContentMode.START
+        val layoutFilename = HorizontalLayout()
+        layoutFilename.minWidth = UIConstants.maxSize
+        layoutFilename.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER)
+        layoutFilename.add(filename)
+        filename.minWidth = UIConstants.maxSize
+        layoutFilename.justifyContentMode = JustifyContentMode.START
+        val layoutSender = HorizontalLayout()
+        layoutSender.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER)
+        layoutSender.minWidth = UIConstants.maxSize
+        sender.minWidth = UIConstants.maxSize
+        layoutSender.add(sender)
+        layoutSender.justifyContentMode = JustifyContentMode.START
+        val layoutDateAndTime = HorizontalLayout()
+        date.minWidth = UIConstants.halfSize
+        time.minWidth = UIConstants.halfSize
+        layoutDateAndTime.add(date, time)
+        layoutDateAndTime.setFlexGrow(1.0, date, time)
+        val layoutDate = HorizontalLayout()
+        layoutDate.minWidth = UIConstants.maxSize
+        layoutDate.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER)
+        layoutDate.add(layoutDateAndTime)
+        layoutDate.justifyContentMode = JustifyContentMode.START
+        val layoutTags = HorizontalLayout()
+        layoutTags.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER)
+        layoutTags.minWidth = UIConstants.maxSize
+        tags.minWidth = UIConstants.maxSize
+        layoutTags.add(tags)
+        layoutTags.justifyContentMode = JustifyContentMode.START
+        add(layoutFilename, layoutSender, layoutDate, layoutTags)
     }
 }

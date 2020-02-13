@@ -1,64 +1,58 @@
-package com.cuupa.dms.authentication;
+package com.cuupa.dms.authentication
 
-import com.vaadin.flow.component.UI;
-import com.vaadin.flow.server.VaadinSession;
-import org.apache.commons.lang3.StringUtils;
+import com.vaadin.flow.component.UI
+import com.vaadin.flow.server.VaadinSession
+import org.apache.commons.lang3.StringUtils
 
-public class BasicAccessControl implements AccessControl {
+class BasicAccessControl : AccessControl {
 
-    @Override
-    public boolean signIn(String username, String password, boolean alreadyHashed) {
+    override fun signIn(username: String, password: String, alreadyHashed: Boolean): Boolean {
         if (StringUtils.isBlank(username)) {
-            return false;
+            return false
         }
-
-
-        if (!username.equals(password)) {
-            return false;
+        if (username != password) {
+            return false
         }
-
-        CurrentUser.set(new User(0, username, username, username, "", false));
-        return true;
+        CurrentUser.set(User(0, username, username, username, false))
+        return true
     }
 
-    @Override
-    public User getUser(String username) {
-        return null;
+    override fun getUser(username: String): User? {
+        return null
     }
 
-    @Override
-    public boolean isUserSingedIn() {
-        return !CurrentUser.get().isEmpty();
+    override val isUserSingedIn: Boolean
+        get() = !CurrentUser.get().isEmpty
+
+    override fun isUserRole(role: UserRole?): Boolean {
+        return false
     }
 
-    @Override
-    public boolean isUserRole(UserRole role) {
-        return false;
+    override val principalName: String
+        get() = CurrentUser.get().username
+
+    override fun singOut() {
+        VaadinSession.getCurrent().session.invalidate()
+        UI.getCurrent().navigate("")
     }
 
-    @Override
-    public String getPrincipalName() {
-        return CurrentUser.get().getUsername();
+    override fun register(username: String, password: String, salt: String, firstname: String?, lastname: String?, accesstoken: String): Boolean {
+        return true
     }
 
-    @Override
-    public void singOut() {
-        VaadinSession.getCurrent().getSession().invalidate();
-        UI.getCurrent().navigate("");
+    override fun save(user: User, encryptedPassword: String, newSalt: String, accessToken: String): Boolean {
+        return true
     }
 
-    @Override
-    public boolean register(String value, String username, String password, String salt, String firstname, String lastname) {
-        return true;
+    override fun save(user: User, accessToken: String): Boolean {
+        return true
     }
 
-    @Override
-    public boolean save(User user) {
-        return true;
+    override fun getAccessToken(username: String): String {
+        return ""
     }
 
-    @Override
-    public boolean signIn(String username, String accessToken) {
-        return false;
+    override fun signIn(username: String, accessToken: String): Boolean {
+        return false
     }
 }

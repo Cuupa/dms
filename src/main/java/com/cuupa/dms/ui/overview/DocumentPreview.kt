@@ -1,86 +1,68 @@
-package com.cuupa.dms.ui.overview;
+package com.cuupa.dms.ui.overview
 
-import com.cuupa.dms.storage.document.Document;
-import com.cuupa.dms.storage.tag.Tag;
-import com.cuupa.dms.ui.documentviews.PdfView;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.tabs.Tab;
-import com.vaadin.flow.component.tabs.Tabs;
+import com.cuupa.dms.UIConstants
+import com.cuupa.dms.storage.tag.Tag
+import com.cuupa.dms.ui.documentviews.PdfView
+import com.vaadin.flow.component.Component
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout
+import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import com.vaadin.flow.component.tabs.Tab
+import com.vaadin.flow.component.tabs.Tabs
+import java.util.*
+import java.util.function.Consumer
+import java.util.stream.Collectors
+import java.util.stream.Stream
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+class DocumentPreview(private val documentGrid: DocumentGrid, private val tagsByOwner: List<Tag>) : HorizontalLayout() {
 
-public class DocumentPreview extends HorizontalLayout {
-
-    private final DocumentGrid documentGrid;
-
-    private final VerticalLayout previewLayout = new VerticalLayout();
-
-    private PdfView lastView = new PdfView();
-
-    private final DocumentPropertiesLayout propertiesLayout = new DocumentPropertiesLayout();
-
-    private final List<Tag> tagsByOwner;
-
-    public DocumentPreview(DocumentGrid documentGrid, List<Tag> tagsByOwner) {
-        this.documentGrid = documentGrid;
-        this.tagsByOwner = tagsByOwner;
-        setSizeFull();
-
-        final VerticalLayout verticalLayout = new VerticalLayout();
-        previewLayout.add(lastView);
-        previewLayout.setSizeFull();
-        propertiesLayout.setVisible(false);
-        verticalLayout.add(createTabs());
-        verticalLayout.add(previewLayout);
-        verticalLayout.add(propertiesLayout);
-        add(verticalLayout);
-    }
-
-    public void loadImage() {
-        final Document document = documentGrid.asSingleSelect().getValue();
+    private val previewLayout = VerticalLayout()
+    private var lastView = PdfView()
+    private val propertiesLayout = DocumentPropertiesLayout()
+    fun loadImage() {
+        val document = documentGrid.asSingleSelect().value
         if (document != null) {
-            PdfView pdfView = new PdfView(document);
-            previewLayout.replace(lastView, pdfView);
-            lastView = pdfView;
+            val pdfView = PdfView(document)
+            previewLayout.replace(lastView, pdfView)
+            lastView = pdfView
         }
     }
 
-    public void loadProperties() {
-        final Document document = documentGrid.asSingleSelect().getValue();
+    fun loadProperties() {
+        val document = documentGrid.asSingleSelect().value
         if (document != null) {
-            propertiesLayout.setDocument(document, tagsByOwner);
+            propertiesLayout.setDocument(document, tagsByOwner)
         }
     }
 
-    private Tabs createTabs() {
-        final Tab tabPreview = new Tab();
-        tabPreview.setLabel("Preview");
+    private fun createTabs(): Tabs {
+        val tabPreview = Tab()
+        tabPreview.label = UIConstants.preview
+        val tabProperties = Tab()
+        tabProperties.label = UIConstants.properties
+        val tabs = Tabs(tabPreview, tabProperties)
+        val tabsToPages: MutableMap<Tab, Component> = HashMap()
+        tabsToPages[tabPreview] = previewLayout
+        tabsToPages[tabProperties] = propertiesLayout
+        val pagesShown: MutableSet<Component?> = Stream.of(previewLayout).collect(Collectors.toSet())
+        tabs.addSelectedChangeListener {
+            pagesShown.forEach(Consumer { page: Component? -> page!!.isVisible = false })
+            pagesShown.clear()
+            val selectedPage = tabsToPages[tabs.selectedTab]
+            selectedPage!!.isVisible = true
+            pagesShown.add(selectedPage)
+        }
+        return tabs
+    }
 
-        final Tab tabProperties = new Tab();
-        tabProperties.setLabel("Properties");
-
-        final Tabs tabs = new Tabs(tabPreview, tabProperties);
-
-        final Map<Tab, Component> tabsToPages = new HashMap<>();
-        tabsToPages.put(tabPreview, previewLayout);
-        tabsToPages.put(tabProperties, propertiesLayout);
-
-        final Set<Component> pagesShown = Stream.of(previewLayout).collect(Collectors.toSet());
-
-        tabs.addSelectedChangeListener(event -> {
-            pagesShown.forEach(page -> page.setVisible(false));
-            pagesShown.clear();
-            Component selectedPage = tabsToPages.get(tabs.getSelectedTab());
-            selectedPage.setVisible(true);
-            pagesShown.add(selectedPage);
-        });
-        return tabs;
+    init {
+        setSizeFull()
+        val verticalLayout = VerticalLayout()
+        previewLayout.add(lastView)
+        previewLayout.setSizeFull()
+        propertiesLayout.isVisible = false
+        verticalLayout.add(createTabs())
+        verticalLayout.add(previewLayout)
+        verticalLayout.add(propertiesLayout)
+        add(verticalLayout)
     }
 }
