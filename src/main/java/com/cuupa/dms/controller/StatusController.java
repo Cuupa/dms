@@ -11,6 +11,6 @@ public class StatusController {
 
     @RequestMapping(value = "/api/rest/1.0/status", method = RequestMethod.GET)
     public ResponseEntity<String> status() {
-        return ResponseEntity.status(HttpStatus.OK).body("");
+        return ResponseEntity.status(HttpStatus.OK).body("Service up");
     }
 }

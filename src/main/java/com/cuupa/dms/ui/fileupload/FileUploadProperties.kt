@@ -8,6 +8,7 @@ import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.component.timepicker.TimePicker
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 class FileUploadProperties : VerticalLayout() {
 
@@ -16,6 +17,7 @@ class FileUploadProperties : VerticalLayout() {
     private val date = DatePicker("Date")
     private val time = TimePicker("Time")
     private val tags = TextField("Tags")
+    private var dueDate = DatePicker("Duedate")
 
     var content = ByteArray(0)
 
@@ -59,6 +61,22 @@ class FileUploadProperties : VerticalLayout() {
         this.tags.value = java.lang.String.join(",", tags)
     }
 
+    fun setDueDate(dueDate: String) {
+        this.dueDate.value = LocalDate.parse(dueDate, DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+    }
+
+    fun getDueDate(): String? {
+        return dueDate.value.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+    }
+
+    fun disableDueDate() {
+        dueDate.isEnabled = false
+    }
+
+    fun isDueDateEnabled(): Boolean {
+        return dueDate.isEnabled
+    }
+
     init {
         filename.minWidth = UIConstants.maxSize
         from.minWidth = UIConstants.maxSize
@@ -70,6 +88,8 @@ class FileUploadProperties : VerticalLayout() {
         val horizontalLayout = HorizontalLayout(date, time)
         horizontalLayout.width = UIConstants.maxSize
         add(horizontalLayout, tags)
+        dueDate.minWidth = UIConstants.maxSize
+        add(dueDate)
         setSizeFull()
     }
 }

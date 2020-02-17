@@ -1,6 +1,8 @@
 package com.cuupa.dms.ui.fileupload
 
 import com.cuupa.dms.Constants
+import com.cuupa.dms.controller.ProcessParameters
+import com.cuupa.dms.service.CamundaService
 import com.cuupa.dms.storage.StorageService
 import com.cuupa.dms.storage.document.Document
 import com.cuupa.dms.storage.tag.Tag
@@ -12,20 +14,25 @@ import java.nio.file.StandardOpenOption
 import java.time.LocalDateTime
 import java.util.stream.Collectors
 
-class DocumentSaveUtil(private val properties: FileUploadProperties, private val storageService: StorageService, private val username: String) {
+class DocumentSaveUtil(private val properties: FileUploadProperties, private val storageService: StorageService, private val camundaService: CamundaService, private val username: String) {
 
     fun save() {
         val path = writeFile()
-        path?.let { writeDatabase(it) }
+        var startedProcess: String? = null
+        if (properties.isDueDateEnabled()) {
+            startedProcess = camundaService.startProcess(ProcessParameters().withUser(username).withDueDate(properties.getDueDate()))
+        }
+        path?.let { writeDatabase(it, startedProcess) }
+
     }
 
-    private fun writeDatabase(path: Path) {
+    private fun writeDatabase(path: Path, startedProcess: String?) {
         storageService.save(Document(path.toString(),
                 properties.getFilename().trim { it <= ' ' },
                 properties.getFrom().trim { it <= ' ' },
                 username,
                 LocalDateTime.of(properties.getDate(), properties.getTime()),
-                properties.getTags().map { name: String -> Tag(name) }))
+                properties.getTags().map { name: String -> Tag(name) }, startedProcess))
     }
 
     private fun writeFile(): Path? {

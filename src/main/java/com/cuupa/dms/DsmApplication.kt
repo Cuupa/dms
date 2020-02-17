@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import java.time.LocalDateTime
-import java.util.*
-import javax.annotation.PostConstruct
 
 @SpringBootApplication
 open class DsmApplication {
@@ -16,7 +14,6 @@ open class DsmApplication {
     @Autowired
     private val storage: StorageService? = null
 
-    @PostConstruct
     fun setup() {
         storage!!.deleteAll()
         val document = Document("",
@@ -24,19 +21,19 @@ open class DsmApplication {
                 "company 1",
                 "user",
                 LocalDateTime.now(),
-                Arrays.asList(Tag("Bill"), Tag("Invoice")))
+                listOf(Tag("Bill"), Tag("Invoice")), "")
         val document2 = Document("",
                 "filename2.pdf",
                 "company 2",
                 "user",
                 LocalDateTime.now(),
-                Arrays.asList(Tag("Bill"), Tag("Invoice")))
+                listOf(Tag("Bill"), Tag("Invoice")), "")
         val document3 = Document("",
                 "filename3.pdf",
                 "company 2",
                 "a",
                 LocalDateTime.now(),
-                Arrays.asList(Tag("Bill"), Tag("Invoice")))
+                listOf(Tag("Bill"), Tag("Invoice")), "")
         storage.save(document)
         storage.save(document2)
         storage.save(document3)

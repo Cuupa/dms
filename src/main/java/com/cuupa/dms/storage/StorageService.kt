@@ -7,7 +7,6 @@ import com.cuupa.dms.storage.document.db.MongoDBDocumentStorage
 import com.cuupa.dms.storage.tag.Tag
 import com.cuupa.dms.storage.tag.db.DBTag
 import com.cuupa.dms.storage.tag.db.MongoDBTagStorage
-import org.apache.commons.lang3.StringUtils
 import java.util.*
 import java.util.stream.Collectors
 
@@ -18,14 +17,14 @@ class StorageService(private val documentStorage: MongoDBDocumentStorage, privat
         tagStorage.deleteAll()
     }
 
-    fun save(document: Document) {
+    fun save(document: Document): DBDocument {
         val tags = document.tags
         val tagsWithOwner = tags.map { tag: Tag -> tag.copy(owner = tag.owner) }
         var tagsInDB = getTagsFromDB(tagsWithOwner)
         saveNewTags(tags, tagsInDB)
         document.tags = tags
         val documentToSave = DocumentMapper.mapToEntity(document)
-        documentStorage.insert(documentToSave)
+        return documentStorage.insert(documentToSave)
     }
 
     private fun getTagsFromDB(tags: List<Tag>): List<DBTag?> {
@@ -57,12 +56,18 @@ class StorageService(private val documentStorage: MongoDBDocumentStorage, privat
     }
 
     fun findDocumentsByOwner(owner: String?): List<Document> {
-        return if (StringUtils.isBlank(owner)) {
-            ArrayList()
+        return if (owner.isNullOrBlank()) {
+            listOf()
         } else documentStorage.findDocumentsByOwner(owner).filterNotNull()
-                .stream()
                 .map { document: DBDocument? -> DocumentMapper.mapToGuiObject(document!!) }
-                .collect(Collectors.toList())
+    }
+
+    fun findDocumentsByOwnerAndProcessInstanceId(owner: String?, processInstanceIds: List<String>): List<Document> {
+        return if (owner.isNullOrBlank()) {
+            listOf()
+        } else {
+            processInstanceIds.map { processInstanceId -> documentStorage.findDBDocumentsByOwnerAndAndProcessInstanceId(owner, processInstanceId) }.map { document: DBDocument? -> DocumentMapper.mapToGuiObject(document!!) }
+        }
     }
 
     fun findTagsByOwner(owner: String): List<Tag> {

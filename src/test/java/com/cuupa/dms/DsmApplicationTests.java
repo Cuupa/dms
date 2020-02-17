@@ -4,12 +4,10 @@ import com.vaadin.flow.component.button.testbench.ButtonElement;
 import com.vaadin.flow.component.notification.testbench.NotificationElement;
 import com.vaadin.flow.theme.lumo.Lumo;
 import org.junit.Assert;
-import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
 public class DsmApplicationTests extends AbstractViewTest {
 
-    @Test
     public void clickingButtonShowsNotification() {
         Assert.assertFalse($(NotificationElement.class).exists());
 
@@ -18,7 +16,6 @@ public class DsmApplicationTests extends AbstractViewTest {
         Assert.assertTrue($(NotificationElement.class).waitForFirst().isOpen());
     }
 
-    @Test
     public void clickingButtonTwiceShowsTwoNotifications() {
         Assert.assertFalse($(NotificationElement.class).exists());
 
@@ -29,7 +26,6 @@ public class DsmApplicationTests extends AbstractViewTest {
         Assert.assertEquals(2, $(NotificationElement.class).all().size());
     }
 
-    @Test
     public void buttonIsUsingLumoTheme() {
         WebElement element = $(ButtonElement.class).first();
         assertThemePresentOnElement(element, Lumo.class);

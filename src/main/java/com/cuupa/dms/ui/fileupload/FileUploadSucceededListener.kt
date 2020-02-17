@@ -31,6 +31,12 @@ class FileUploadSucceededListener(private val externSemanticService: ExternSeman
             fileUploadProperties.setDate(LocalDate.now())
             fileUploadProperties.setTime(LocalTime.now())
             fileUploadProperties.setTags(semanticResults.map(SemanticResult::topicName))
+            val dueDate = getDueDate(semanticResults).stream().findFirst()
+            if (dueDate.isPresent) {
+                fileUploadProperties.setDueDate(dueDate.get())
+            } else {
+                fileUploadProperties.disableDueDate()
+            }
         }
 
         fileUploadProperties.content = getBytes(buffer, event)
@@ -40,6 +46,12 @@ class FileUploadSucceededListener(private val externSemanticService: ExternSeman
         }))
         preview.add(pdfView)
         properties.add(fileUploadProperties)
+    }
+
+    private fun getDueDate(result: List<SemanticResult>): List<String> {
+        return result.filter { localResult ->
+            localResult.metaData.filter { metadata -> metadata.name == "dueDate" }.any()
+        }.flatMap { metaDataList -> metaDataList.metaData.map { metadata -> metadata.value } }
     }
 
     private fun getBytes(buffer: MultiFileMemoryBuffer, event: SucceededEvent): ByteArray {

@@ -2,6 +2,7 @@ package com.cuupa.dms.ui.fileupload
 
 import com.cuupa.dms.UIConstants
 import com.cuupa.dms.authentication.AccessControl
+import com.cuupa.dms.service.CamundaService
 import com.cuupa.dms.service.extern.ExternSemanticService
 import com.cuupa.dms.storage.StorageService
 import com.cuupa.dms.ui.MainView
@@ -16,7 +17,7 @@ import com.vaadin.flow.router.Route
 import org.springframework.beans.factory.annotation.Autowired
 
 @Route(value = "upload", layout = MainView::class)
-class FileUploadOverview(@Autowired externSemanticService: ExternSemanticService, @Autowired storageService: StorageService, @Autowired accessControl: AccessControl) : HorizontalLayout(), HasUrlParameter<String?> {
+class FileUploadOverview(@Autowired externSemanticService: ExternSemanticService, @Autowired storageService: StorageService, @Autowired camundaService: CamundaService, @Autowired accessControl: AccessControl) : HorizontalLayout(), HasUrlParameter<String?> {
 
     override fun setParameter(event: BeforeEvent, @OptionalParameter parameter: String?) { //viewLogic.enter(parameter);
     }
@@ -26,7 +27,7 @@ class FileUploadOverview(@Autowired externSemanticService: ExternSemanticService
     }
 
     init {
-        val previewAndPropertiesLayout = PreviewAndPropertiesLayout(storageService, accessControl)
+        val previewAndPropertiesLayout = PreviewAndPropertiesLayout(storageService, camundaService, accessControl)
         val buffer = MultiFileMemoryBuffer()
         val upload = Upload(buffer)
         upload.addSucceededListener(FileUploadSucceededListener(externSemanticService,

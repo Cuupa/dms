@@ -2,6 +2,7 @@ package com.cuupa.dms.ui.fileupload
 
 import com.cuupa.dms.UIConstants
 import com.cuupa.dms.authentication.AccessControl
+import com.cuupa.dms.service.CamundaService
 import com.cuupa.dms.storage.StorageService
 import com.cuupa.dms.ui.documentviews.PdfView
 import com.cuupa.dms.ui.overview.DocumentsOverview
@@ -14,7 +15,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.*
 
-class PreviewAndPropertiesLayout(@Autowired storageService: StorageService, @Autowired accessControl: AccessControl) : VerticalLayout() {
+class PreviewAndPropertiesLayout(@Autowired storageService: StorageService, @Autowired camundaService: CamundaService, @Autowired accessControl: AccessControl) : VerticalLayout() {
 
     private val previousButton = Button(UIConstants.previous)
     private val nextButton = Button(UIConstants.next)
@@ -56,7 +57,7 @@ class PreviewAndPropertiesLayout(@Autowired storageService: StorageService, @Aut
     }
 
     private fun setContent() {
-        if (!properties.isEmpty()) {
+        if (properties.isNotEmpty()) {
             contentLayout.replace(lastPropertiesLayout, properties[index])
             lastPropertiesLayout = properties[index]
             lastPropertiesLayout.height = UIConstants.maxSize
@@ -76,7 +77,7 @@ class PreviewAndPropertiesLayout(@Autowired storageService: StorageService, @Aut
         }
     }
 
-    private fun initButtons(storageService: StorageService, accessControl: AccessControl) {
+    private fun initButtons(storageService: StorageService, camundaService: CamundaService, accessControl: AccessControl) {
         previousButton.minWidth = "10%"
         nextButton.minWidth = "10%"
         previousButton.isVisible = false
@@ -89,7 +90,7 @@ class PreviewAndPropertiesLayout(@Autowired storageService: StorageService, @Aut
         save.themeName = UIConstants.primaryTheme
         save.addClickListener {
             properties.forEach { property ->
-                DocumentSaveUtil(property, storageService, accessControl.principalName).save()
+                DocumentSaveUtil(property, storageService, camundaService, accessControl.principalName).save()
             }
             save.ui.ifPresent { ui: UI -> ui.navigate(DocumentsOverview.VIEW_NAME) }
         }
@@ -97,7 +98,7 @@ class PreviewAndPropertiesLayout(@Autowired storageService: StorageService, @Aut
     }
 
     init {
-        initButtons(storageService, accessControl)
+        initButtons(storageService, camundaService, accessControl)
         lastPreviewLayout.isVisible = false
         lastPropertiesLayout.isVisible = false
         minWidth = "90%"

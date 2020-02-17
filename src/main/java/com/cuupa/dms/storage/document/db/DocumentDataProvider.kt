@@ -6,8 +6,10 @@ import com.vaadin.flow.data.provider.ListDataProvider
 import com.vaadin.flow.function.SerializablePredicate
 import java.util.*
 
-class DocumentDataProvider(storageService: StorageService, username: String) : ListDataProvider<Document>(storageService.findDocumentsByOwner(username)) {
+class DocumentDataProvider(storageService: StorageService, username: String, processesForOwner: List<String>) : ListDataProvider<Document>(getDocuments(storageService, username, processesForOwner)) {
     private var filtertext: String? = null
+
+    constructor(storageService: StorageService, username: String) : this(storageService, username, listOf())
 
     var filter: String
         get() = super.getFilter().toString()
@@ -49,3 +51,12 @@ class DocumentDataProvider(storageService: StorageService, username: String) : L
         return values.stream().anyMatch { value: String -> value.contains(filtertext) }
     }
 }
+
+private fun getDocuments(storageService: StorageService, username: String, processesForOwner: List<String>): List<Document> {
+    return if (processesForOwner.isNullOrEmpty()) {
+        storageService.findDocumentsByOwner(username)
+    } else {
+        storageService.findDocumentsByOwnerAndProcessInstanceId(username, processesForOwner)
+    }
+}
+

@@ -3,6 +3,7 @@ package com.cuupa.dms.ui
 import com.cuupa.dms.UIConstants
 import com.cuupa.dms.authentication.AccessControl
 import com.cuupa.dms.ui.fileupload.FileUploadOverview
+import com.cuupa.dms.ui.inbox.Inbox
 import com.cuupa.dms.ui.overview.DocumentsOverview
 import com.cuupa.dms.ui.settings.UserSettings
 import com.vaadin.flow.component.Component

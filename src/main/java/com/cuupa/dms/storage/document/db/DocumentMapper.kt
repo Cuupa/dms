@@ -2,7 +2,6 @@ package com.cuupa.dms.storage.document.db
 
 import com.cuupa.dms.storage.document.Document
 import com.cuupa.dms.storage.tag.Tag
-import java.util.stream.Collectors
 
 object DocumentMapper {
 
@@ -12,7 +11,7 @@ object DocumentMapper {
                 document.sender,
                 document.owner,
                 document.createDate,
-                document.tags.stream().map(Tag::name).collect(Collectors.toList()))
+                document.tags.map(Tag::name), document.processInstanceId)
     }
 
     fun mapToGuiObject(document: DBDocument): Document {
@@ -22,8 +21,8 @@ object DocumentMapper {
                 document.owner,
                 document.createDate,
                 document.tags
-                        .stream()
-                        .map { tag: String? -> Tag(tag!!, document.owner) }
-                        .collect(Collectors.toList()))
+                        .map { tag: String? -> Tag(tag!!, document.owner) },
+                document.processInstanceId
+        )
     }
 }

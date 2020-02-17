@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+    <Resource
+            name="jdbc/ProcessEngine"
+            global="jdbc/ProcessEngine"
+            auth="Container"
+            type="javax.sql.DataSource"
+            driverClassName="org.mariadb.jdbc.Driver"
+            url="jdbc:mariadb://10.80.22.5:3307/camunda"
+            username="camundaUser"
+            password="camundaPassword"
+            maxTotal="50"
+            maxIdle="0"
+            maxWaitMillis="-1"
+            removeAbandonedOnBorrow="true"
+            removeAbandonedOnMaintenance="true"/>
+</Context>

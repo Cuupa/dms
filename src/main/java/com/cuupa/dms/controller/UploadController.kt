@@ -1,5 +1,6 @@
 package com.cuupa.dms.controller
 
+import com.cuupa.dms.service.CamundaService
 import com.cuupa.dms.service.extern.ExternSemanticService
 import com.cuupa.dms.service.extern.SemanticResult
 import com.cuupa.dms.storage.StorageService
@@ -17,7 +18,7 @@ import java.time.LocalDateTime
 import java.util.stream.Collectors
 
 @RestController
-class UploadController(@param:Autowired private val storageService: StorageService?, @param:Autowired private val externSemanticService: ExternSemanticService?, @param:Autowired private val uploadValidator: UploadValidator) {
+class UploadController(@param:Autowired private val storageService: StorageService?, @param:Autowired private val externSemanticService: ExternSemanticService?, @param:Autowired private val uploadValidator: UploadValidator, @Autowired private val camundaService: CamundaService) {
 
     @RequestMapping(value = ["/api/rest/1.0/upload"], method = [RequestMethod.POST])
     fun uploadDocument(@RequestBody accessToken: String?, @RequestBody username: String?, @RequestBody filename: String?, @RequestBody content: ByteArray?): ResponseEntity<String> {
@@ -27,10 +28,23 @@ class UploadController(@param:Autowired private val storageService: StorageServi
         }
         val result = externSemanticService!!.analize(content!!)
         val senderString = getSender(result)
+        val dueDate = getDueDate(result)
+
+        var processInstanceId: String? = null
+        //if(dueDate.isNotEmpty()) {
+        //     processInstanceId = camundaService.startProcess(ProcessParameters().withUser(username!!).withDueDate(dueDate))
+        // }
+
         val tags = result.stream().map(SemanticResult::topicName).map { name: String? -> Tag(name!!) }.collect(Collectors.toList())
-        val document = Document(filename!!, filename, senderString!!, username!!, LocalDateTime.now(), tags)
-        storageService!!.save(document)
+        val document = Document(filename!!, filename, senderString!!, username!!, LocalDateTime.now(), tags, processInstanceId)
+        val savedDocument = storageService!!.save(document)
         return ResponseEntity.status(HttpStatus.CREATED).body(document.name)
+    }
+
+    private fun getDueDate(result: List<SemanticResult>): List<String> {
+        return result.filter { localResult ->
+            localResult.metaData.filter { metadata -> metadata.name == "dueDate" }.any()
+        }.flatMap { metaDataList -> metaDataList.metaData.map { metadata -> metadata.value } }
     }
 
     private fun getSender(result: List<SemanticResult>): String? {

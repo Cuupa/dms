@@ -10,11 +10,15 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="camunda" target="11" />
       <module name="dms" target="11" />
+      <module name="UI" target="11" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="UI" options="-parameters" />
+      <module name="camunda" options="-parameters" />
       <module name="dms" options="-parameters" />
     </option>
   </component>
