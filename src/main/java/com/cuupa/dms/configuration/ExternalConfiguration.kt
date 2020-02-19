@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 open class ExternalConfiguration {
+
     @Bean
     open fun externSemanticService(): ExternSemanticService {
         return ExternSemanticService()

@@ -1,6 +1,7 @@
-package com.cuupa.dms.ui.overview
+package com.cuupa.dms.ui.inbox
 
 import com.cuupa.dms.UIConstants
+import com.cuupa.dms.service.CamundaService
 import com.cuupa.dms.storage.document.Document
 import com.cuupa.dms.storage.tag.Tag
 import com.cuupa.dms.ui.documentviews.PdfView
@@ -10,16 +11,17 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.tabs.Tab
 import com.vaadin.flow.component.tabs.Tabs
+import org.springframework.beans.factory.annotation.Autowired
 import java.util.*
 import java.util.function.Consumer
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
-class DocumentPreview(private val documentGrid: Grid<Document>, private val tagsByOwner: List<Tag>) : HorizontalLayout() {
+class InboxPreview(@Autowired val camundaService: CamundaService, private val documentGrid: Grid<Document>, private val tagsByOwner: List<Tag>) : HorizontalLayout() {
 
     private val previewLayout = VerticalLayout()
     private var lastView = PdfView()
-    private val propertiesLayout = DocumentPropertiesLayout()
+    private val propertiesLayout = InboxPropertiesLayout(camundaService)
     fun loadImage() {
         val document = documentGrid.asSingleSelect().value
         if (document != null) {

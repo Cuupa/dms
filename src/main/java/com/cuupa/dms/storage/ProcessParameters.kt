@@ -1,4 +1,4 @@
-package com.cuupa.dms.controller
+package com.cuupa.dms.storage
 
 class ProcessParameters {
 

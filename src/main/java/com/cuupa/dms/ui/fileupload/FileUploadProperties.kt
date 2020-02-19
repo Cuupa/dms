@@ -66,7 +66,7 @@ class FileUploadProperties : VerticalLayout() {
     }
 
     fun getDueDate(): String? {
-        return dueDate.value.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+        return dueDate.value?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
     }
 
     fun disableDueDate() {

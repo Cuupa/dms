@@ -17,7 +17,7 @@ open class CamundaConfiguration {
     open fun datasource(): DataSource {
         val datasourceBuilder = DataSourceBuilder.create()
         datasourceBuilder.driverClassName("org.mariadb.jdbc.Driver")
-        datasourceBuilder.url("jdbc:mariadb://localhost:3306/camunda")
+        datasourceBuilder.url("jdbc:mariadb://10.80.22.5:3307/camunda")
         datasourceBuilder.username("camundaUser")
         datasourceBuilder.password("camundaPassword")
         return datasourceBuilder.build()

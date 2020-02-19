@@ -1,5 +1,6 @@
 package com.cuupa.dms.storage
 
+import com.cuupa.dms.service.CamundaService
 import com.cuupa.dms.storage.document.Document
 import com.cuupa.dms.storage.document.db.DBDocument
 import com.cuupa.dms.storage.document.db.DocumentMapper
@@ -10,7 +11,7 @@ import com.cuupa.dms.storage.tag.db.MongoDBTagStorage
 import java.util.*
 import java.util.stream.Collectors
 
-class StorageService(private val documentStorage: MongoDBDocumentStorage, private val tagStorage: MongoDBTagStorage) {
+class StorageService(private val documentStorage: MongoDBDocumentStorage, private val tagStorage: MongoDBTagStorage, private val camundaService: CamundaService) {
 
     fun deleteAll() {
         documentStorage.deleteAll()
@@ -77,4 +78,11 @@ class StorageService(private val documentStorage: MongoDBDocumentStorage, privat
                 .collect(Collectors.toList())
     }
 
+    fun complete(selectedDocument: Document?) {
+        if (selectedDocument != null) {
+            camundaService.complete(selectedDocument.processInstanceId)
+            selectedDocument.processInstanceId = null
+            save(selectedDocument)
+        }
+    }
 }

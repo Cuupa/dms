@@ -1,8 +1,8 @@
 package com.cuupa.dms.ui.fileupload
 
 import com.cuupa.dms.Constants
-import com.cuupa.dms.controller.ProcessParameters
 import com.cuupa.dms.service.CamundaService
+import com.cuupa.dms.storage.ProcessParameters
 import com.cuupa.dms.storage.StorageService
 import com.cuupa.dms.storage.document.Document
 import com.cuupa.dms.storage.tag.Tag
