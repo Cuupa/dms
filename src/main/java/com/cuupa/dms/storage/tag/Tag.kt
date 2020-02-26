@@ -10,8 +10,8 @@ data class Tag(var name: String, var owner: String?) : Comparable<Tag> {
         return name
     }
 
-    override fun compareTo(tag: Tag): Int {
-        return name.compareTo(tag.name)
+    override fun compareTo(other: Tag): Int {
+        return name.compareTo(other.name)
     }
 
     override fun equals(other: Any?): Boolean {

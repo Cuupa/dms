@@ -19,12 +19,11 @@ class DatabaseAccessControl(@param:Autowired private val userRepository: UserRep
             val encryptedPassword = getPassword(password, alreadyHashed, dbUser)
             dbUser = userRepository.findByUsernameAndPassword(username, encryptedPassword)
             if (dbUser != null) {
-                val user = User(dbUser.id!!,
+                set(User(dbUser.id!!,
                         dbUser.username,
                         dbUser.firstname,
                         dbUser.lastname,
-                        dbUser.isConfirmed)
-                set(user)
+                        dbUser.isConfirmed))
             }
             return true
         }
@@ -37,12 +36,11 @@ class DatabaseAccessControl(@param:Autowired private val userRepository: UserRep
 
     override fun getUser(username: String): User? {
         val dbUser = userRepository.findByUsername(username)
-        val user = User(dbUser!!.id!!,
+        return User(dbUser!!.id!!,
                 dbUser.username,
                 dbUser.firstname,
                 dbUser.lastname,
                 dbUser.isConfirmed)
-        return user
     }
 
     @Throws(InvalidKeySpecException::class, NoSuchAlgorithmException::class)
@@ -65,11 +63,13 @@ class DatabaseAccessControl(@param:Autowired private val userRepository: UserRep
         get() = get().username
 
     override fun singOut() {
+        set(null)
         VaadinSession.getCurrent().session.invalidate()
         UI.getCurrent().navigate("")
     }
 
-    override fun register(username: String, password: String, salt: String, firstname: String?, lastname: String?, accesstoken: String): Boolean {
+    override fun register(username: String, password: String, salt: String, firstname: String?, lastname: String?,
+                          accesstoken: String): Boolean {
         val byUsername = userRepository.findByUsername(username)
         return if (byUsername == null) {
             val dbUser = DbUser(username, password, salt, firstname, lastname, accesstoken, false)

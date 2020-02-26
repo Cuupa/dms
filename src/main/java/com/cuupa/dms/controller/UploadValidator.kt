@@ -17,10 +17,10 @@ class UploadValidator(@param:Autowired private val accessControl: AccessControl)
             return Optional.of(ResponseEntity.status(HttpStatus.FORBIDDEN).body("Forbidden"))
         }
         if (StringUtils.isBlank(filename)) {
-            return Optional.of(ResponseEntity.status(HttpStatus.NO_CONTENT).body("No filename specified"))
+            return Optional.of(ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No filename specified"))
         }
         return if (content == null || content.isEmpty()) {
-            Optional.of(ResponseEntity.status(HttpStatus.NO_CONTENT).body("No document"))
+            Optional.of(ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No document"))
         } else Optional.empty()
     }
 

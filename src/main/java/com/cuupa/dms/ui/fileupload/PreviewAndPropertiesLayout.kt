@@ -2,9 +2,9 @@ package com.cuupa.dms.ui.fileupload
 
 import com.cuupa.dms.UIConstants
 import com.cuupa.dms.authentication.AccessControl
-import com.cuupa.dms.service.CamundaService
-import com.cuupa.dms.storage.StorageService
-import com.cuupa.dms.ui.documentviews.PdfView
+import com.cuupa.dms.storage.document.Document
+import com.cuupa.dms.storage.tag.Tag
+import com.cuupa.dms.ui.documentviews.DocumentView
 import com.cuupa.dms.ui.overview.DocumentsOverview
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.button.Button
@@ -13,9 +13,10 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.LocalDateTime
 import java.util.*
 
-class PreviewAndPropertiesLayout(@Autowired storageService: StorageService, @Autowired camundaService: CamundaService, @Autowired accessControl: AccessControl) : VerticalLayout() {
+class PreviewAndPropertiesLayout(@Autowired val documentSaveService: DocumentSaveService, @Autowired val accessControl: AccessControl) : VerticalLayout() {
 
     private val previousButton = Button(UIConstants.previous)
     private val nextButton = Button(UIConstants.next)
@@ -24,7 +25,7 @@ class PreviewAndPropertiesLayout(@Autowired storageService: StorageService, @Aut
     private val contentLayout = HorizontalLayout()
 
     val properties: MutableList<FileUploadProperties> = Vector()
-    val preview: MutableList<PdfView> = Vector()
+    val preview: MutableList<DocumentView> = Vector()
 
     private var lastPropertiesLayout = FileUploadProperties()
     private var lastPreviewLayout = VerticalLayout()
@@ -77,7 +78,7 @@ class PreviewAndPropertiesLayout(@Autowired storageService: StorageService, @Aut
         }
     }
 
-    private fun initButtons(storageService: StorageService, camundaService: CamundaService, accessControl: AccessControl) {
+    private fun initButtons(accessControl: AccessControl) {
         previousButton.minWidth = "10%"
         nextButton.minWidth = "10%"
         previousButton.isVisible = false
@@ -89,8 +90,18 @@ class PreviewAndPropertiesLayout(@Autowired storageService: StorageService, @Aut
         save.isEnabled = false
         save.themeName = UIConstants.primaryTheme
         save.addClickListener {
+
             properties.forEach { property ->
-                DocumentSaveUtil(property, storageService, camundaService, accessControl.principalName).save()
+                documentSaveService.save(Document(
+                        filename = property.getFilename(),
+                        name = property.getFilename(),
+                        createDate = LocalDateTime.of(property.getDate(), property.getTime()),
+                        owner = accessControl.principalName,
+                        sender = property.getFrom(),
+                        tags = property.getTags().map { name: String -> Tag(name) },
+                        processInstanceId = null),
+                        content = property.content,
+                        dueDate = property.getDueDate())
             }
             save.ui.ifPresent { ui: UI -> ui.navigate(DocumentsOverview.VIEW_NAME) }
         }
@@ -98,7 +109,7 @@ class PreviewAndPropertiesLayout(@Autowired storageService: StorageService, @Aut
     }
 
     init {
-        initButtons(storageService, camundaService, accessControl)
+        initButtons(accessControl)
         lastPreviewLayout.isVisible = false
         lastPropertiesLayout.isVisible = false
         minWidth = "90%"

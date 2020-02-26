@@ -7,7 +7,7 @@ object CurrentUser {
     /**
      * The attribute key used to store the username in the session.
      */
-    val CURRENT_USER_SESSION_ATTRIBUTE_KEY = CurrentUser::class.java.canonicalName
+    private val CURRENT_USER_SESSION_ATTRIBUTE_KEY: String = CurrentUser::class.java.canonicalName
 
     /**
      * Returns the name of the current user stored in the current session, or an

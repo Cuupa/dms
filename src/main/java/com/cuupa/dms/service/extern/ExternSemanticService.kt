@@ -13,13 +13,14 @@ class ExternSemanticService {
     @Value("\${services.remote.semantic.url}")
     private val semanticUrl: String? = null
 
-    fun analize(text: ByteArray): List<SemanticResult> {
+    private val listType = object : TypeToken<ArrayList<SemanticResult?>?>() {}.type
+
+    fun analyze(text: ByteArray): List<SemanticResult> {
         val response = template.postForEntity(semanticUrl, text, String::class.java)
         return if (response.statusCode.is2xxSuccessful) {
-            val listType = object : TypeToken<ArrayList<SemanticResult?>?>() {}.type
             gson.fromJson(response.body, listType)
         } else {
-            throw RuntimeException()
+            listOf()
         }
     }
 }

@@ -43,10 +43,10 @@ class LoginScreen(@param:Autowired private val accessControl: AccessControl) : F
             ui.get().navigate("")
         } else {
             event.source.isError = true
-            LOGGER.error("Failed to log in user '" + event.username + "'")
+            LOGGER.error("Failed to log in user '${event.username}'")
             val runnable = Runnable {
                 try {
-                    Thread.sleep(20000)
+                    Thread.sleep(2000)
                 } catch (e: InterruptedException) {
                     e.printStackTrace()
                 } finally {

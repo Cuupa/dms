@@ -1,9 +1,9 @@
 package com.cuupa.dms.ui.inbox
 
+import com.cuupa.dms.service.LocalDateTimeFormatter
 import com.cuupa.dms.storage.StorageService
 import com.cuupa.dms.storage.document.Document
 import com.cuupa.dms.storage.tag.Tag
-import com.cuupa.dms.ui.LocalDateTimeFormatter
 import com.vaadin.flow.component.AttachEvent
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.grid.Grid

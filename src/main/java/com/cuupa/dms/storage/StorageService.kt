@@ -11,7 +11,8 @@ import com.cuupa.dms.storage.tag.db.MongoDBTagStorage
 import java.util.*
 import java.util.stream.Collectors
 
-class StorageService(private val documentStorage: MongoDBDocumentStorage, private val tagStorage: MongoDBTagStorage, private val camundaService: CamundaService) {
+class StorageService(private val documentStorage: MongoDBDocumentStorage, private val tagStorage: MongoDBTagStorage,
+                     private val camundaService: CamundaService) {
 
     fun deleteAll() {
         documentStorage.deleteAll()
@@ -29,28 +30,23 @@ class StorageService(private val documentStorage: MongoDBDocumentStorage, privat
     }
 
     private fun getTagsFromDB(tags: List<Tag>): List<DBTag?> {
-        return tags.stream()
+        return tags
                 .map { tag: Tag -> tagStorage.findTagByNameAndOwner(tag.name, tag.owner) }
                 .filter { obj: DBTag? -> Objects.nonNull(obj) }
-                .collect(Collectors.toList())
     }
 
     private fun saveNewTags(tags: List<Tag>, tagsInDB: List<DBTag?>) {
         val filteredTags = tags.stream()
                 .filter { tag: Tag ->
-                    !tagsInDB.stream()
-                            .map { tag.name }
-                            .collect(Collectors.toList())
+                    !tagsInDB.map { tag.name }
                             .contains(tag.name)
                 }
                 .filter { tag: Tag ->
-                    !tagsInDB.stream()
-                            .map { tag.owner }
-                            .collect(Collectors.toList())
+                    !tagsInDB.map { tag.owner }
                             .contains(tag.owner)
                 }
                 .collect(Collectors.toList())
-        val collect = filteredTags.stream().map { tag: Tag -> DBTag(tag.name, tag.owner) }.collect(Collectors.toList())
+        val collect = filteredTags.map { tag: Tag -> DBTag(tag.name, tag.owner) }
         for (tag in collect) {
             tagStorage.insert(tag)
         }
@@ -67,7 +63,8 @@ class StorageService(private val documentStorage: MongoDBDocumentStorage, privat
         return if (owner.isNullOrBlank()) {
             listOf()
         } else {
-            processInstanceIds.map { processInstanceId -> documentStorage.findDBDocumentsByOwnerAndAndProcessInstanceId(owner, processInstanceId) }.map { document: DBDocument? -> DocumentMapper.mapToGuiObject(document!!) }
+            processInstanceIds.map { processInstanceId -> documentStorage.findDBDocumentsByOwnerAndAndProcessInstanceId(owner, processInstanceId) }
+                    .map { document: DBDocument? -> DocumentMapper.mapToGuiObject(document!!) }
         }
     }
 

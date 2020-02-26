@@ -1,8 +1,8 @@
 package com.cuupa.dms.ui.overview
 
+import com.cuupa.dms.service.LocalDateTimeFormatter
 import com.cuupa.dms.storage.document.Document
 import com.cuupa.dms.storage.tag.Tag
-import com.cuupa.dms.ui.LocalDateTimeFormatter
 import com.vaadin.flow.component.AttachEvent
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.grid.Grid

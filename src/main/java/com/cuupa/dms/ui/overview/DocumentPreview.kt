@@ -1,29 +1,27 @@
 package com.cuupa.dms.ui.overview
 
-import com.cuupa.dms.UIConstants
+import com.cuupa.dms.authentication.AccessControl
 import com.cuupa.dms.storage.document.Document
 import com.cuupa.dms.storage.tag.Tag
-import com.cuupa.dms.ui.documentviews.PdfView
-import com.vaadin.flow.component.Component
+import com.cuupa.dms.ui.PropertyLayout
+import com.cuupa.dms.ui.PropertyTabs
+import com.cuupa.dms.ui.documentviews.DocumentView
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
-import com.vaadin.flow.component.tabs.Tab
-import com.vaadin.flow.component.tabs.Tabs
-import java.util.*
-import java.util.function.Consumer
-import java.util.stream.Collectors
-import java.util.stream.Stream
+import org.springframework.beans.factory.annotation.Autowired
 
-class DocumentPreview(private val documentGrid: Grid<Document>, private val tagsByOwner: List<Tag>) : HorizontalLayout() {
+class DocumentPreview(@Autowired accessControl: AccessControl, private val documentGrid: Grid<Document>, private val
+tagsByOwner: List<Tag>) :
+        HorizontalLayout() {
 
     private val previewLayout = VerticalLayout()
-    private var lastView = PdfView()
-    private val propertiesLayout = DocumentPropertiesLayout()
+    private var lastView: DocumentView = DocumentView()
+    private val propertiesLayout: PropertyLayout = DocumentPropertiesLayout(accessControl)
     fun loadImage() {
         val document = documentGrid.asSingleSelect().value
         if (document != null) {
-            val pdfView = PdfView(document)
+            val pdfView = DocumentView().get(document)
             previewLayout.replace(lastView, pdfView)
             lastView = pdfView
         }
@@ -36,35 +34,17 @@ class DocumentPreview(private val documentGrid: Grid<Document>, private val tags
         }
     }
 
-    private fun createTabs(): Tabs {
-        val tabPreview = Tab()
-        tabPreview.label = UIConstants.preview
-        val tabProperties = Tab()
-        tabProperties.label = UIConstants.properties
-        val tabs = Tabs(tabPreview, tabProperties)
-        val tabsToPages: MutableMap<Tab, Component> = HashMap()
-        tabsToPages[tabPreview] = previewLayout
-        tabsToPages[tabProperties] = propertiesLayout
-        val pagesShown: MutableSet<Component?> = Stream.of(previewLayout).collect(Collectors.toSet())
-        tabs.addSelectedChangeListener {
-            pagesShown.forEach(Consumer { page: Component? -> page!!.isVisible = false })
-            pagesShown.clear()
-            val selectedPage = tabsToPages[tabs.selectedTab]
-            selectedPage!!.isVisible = true
-            pagesShown.add(selectedPage)
-        }
-        return tabs
-    }
-
     init {
-        setSizeFull()
-        val verticalLayout = VerticalLayout()
-        previewLayout.add(lastView)
-        previewLayout.setSizeFull()
-        propertiesLayout.isVisible = false
-        verticalLayout.add(createTabs())
-        verticalLayout.add(previewLayout)
-        verticalLayout.add(propertiesLayout)
-        add(verticalLayout)
+        if (accessControl.isUserSingedIn) {
+            setSizeFull()
+            val verticalLayout = VerticalLayout()
+            previewLayout.add(lastView)
+            previewLayout.setSizeFull()
+            propertiesLayout.isVisible = false
+            verticalLayout.add(PropertyTabs(previewLayout, propertiesLayout))
+            verticalLayout.add(previewLayout)
+            verticalLayout.add(propertiesLayout)
+            add(verticalLayout)
+        }
     }
 }

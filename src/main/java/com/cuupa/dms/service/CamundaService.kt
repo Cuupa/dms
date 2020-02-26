@@ -13,15 +13,16 @@ import java.time.format.DateTimeFormatter
 
 class CamundaService(@Autowired val runtimeService: RuntimeService, @Autowired val taskService: TaskService) {
 
-
     fun getProcessesForOwner(owner: String): List<String> {
-        if (owner.isNullOrBlank()) {
+        if (owner.isBlank()) {
             return listOf()
         }
-        val taskList = taskService.createTaskQuery().processDefinitionKey(Constants.OPENTASK_MODEL).processVariableValueEquals("owner", owner).active().list()
+        val taskList = taskService.createTaskQuery().processDefinitionKey(Constants.OPENTASK_MODEL)
+                .processVariableValueEquals("owner", owner).active().list()
         val processInstanceIds = taskList.map { task -> task.processInstanceId }.toMutableSet()
         return if (processInstanceIds.isNotEmpty()) {
-            val processInstances = runtimeService.createProcessInstanceQuery().processInstanceIds(processInstanceIds).list()
+            val processInstances = runtimeService.createProcessInstanceQuery().processInstanceIds(processInstanceIds)
+                    .list()
             processInstances.map { instance -> instance.processInstanceId }
         } else {
             listOf()
@@ -39,11 +40,13 @@ class CamundaService(@Autowired val runtimeService: RuntimeService, @Autowired v
         return mutableMapOf(Pair("complete", false))
     }
 
-    fun getProcessByProcessInstanceId(processInstanceId: String?, variableName: String): MutableList<VariableInstance>? {
+    fun getProcessByProcessInstanceId(processInstanceId: String?,
+                                      variableName: String): MutableList<VariableInstance>? {
         if (processInstanceId.isNullOrBlank()) {
             return null
         }
-        return runtimeService.createVariableInstanceQuery().processInstanceIdIn(processInstanceId).variableName(variableName).list()
+        return runtimeService.createVariableInstanceQuery().processInstanceIdIn(processInstanceId)
+                .variableName(variableName).list()
     }
 
     fun complete(processInstanceId: String?) {

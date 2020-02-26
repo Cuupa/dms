@@ -17,7 +17,8 @@ class DbUser {
     lateinit var accesstoken: String
     var isConfirmed = false
 
-    constructor(id: Int, username: String, password: String, salt: String, firstname: String?, lastname: String?, accesstoken: String, confirmed: Boolean) {
+    constructor(id: Int, username: String, password: String, salt: String, firstname: String?, lastname: String?,
+                accesstoken: String, confirmed: Boolean) {
         this.id = id
         this.username = username
         this.password = password
@@ -28,7 +29,8 @@ class DbUser {
         isConfirmed = confirmed
     }
 
-    constructor(username: String, password: String, salt: String, firstname: String?, lastname: String?, accesstoken: String, confirmed: Boolean) {
+    constructor(username: String, password: String, salt: String, firstname: String?, lastname: String?,
+                accesstoken: String, confirmed: Boolean) {
         this.username = username
         this.password = password
         this.salt = salt
@@ -44,7 +46,7 @@ class DbUser {
         return "User{" + "id=" + id + ", username='" + username + '\'' + ", firstname='" +
                 firstname +
                 '\'' +
-                ", surname='" +
+                ", lastname='" +
                 lastname +
                 '\'' +
                 '}'

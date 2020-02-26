@@ -1,11 +1,10 @@
 package com.cuupa.dms.controller
 
-import com.cuupa.dms.service.CamundaService
 import com.cuupa.dms.service.extern.ExternSemanticService
 import com.cuupa.dms.service.extern.SemanticResult
-import com.cuupa.dms.storage.StorageService
 import com.cuupa.dms.storage.document.Document
 import com.cuupa.dms.storage.tag.Tag
+import com.cuupa.dms.ui.fileupload.DocumentSaveService
 import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -18,7 +17,8 @@ import java.time.LocalDateTime
 import java.util.stream.Collectors
 
 @RestController
-class UploadController(@param:Autowired private val storageService: StorageService?, @param:Autowired private val externSemanticService: ExternSemanticService?, @param:Autowired private val uploadValidator: UploadValidator, @Autowired private val camundaService: CamundaService) {
+class UploadController(@param:Autowired private val documentSaveService: DocumentSaveService, @param:Autowired private val externSemanticService:
+ExternSemanticService, @param:Autowired private val uploadValidator: UploadValidator) {
 
     @RequestMapping(value = ["/api/rest/1.0/upload"], method = [RequestMethod.POST])
     fun uploadDocument(@RequestBody accessToken: String?, @RequestBody username: String?, @RequestBody filename: String?, @RequestBody content: ByteArray?): ResponseEntity<String> {
@@ -26,18 +26,14 @@ class UploadController(@param:Autowired private val storageService: StorageServi
         if (optionalResponse.isPresent) {
             return optionalResponse.get()
         }
-        val result = externSemanticService!!.analize(content!!)
+        val result = externSemanticService.analyze(content!!)
         val senderString = getSender(result)
         val dueDate = getDueDate(result)
 
-        var processInstanceId: String? = null
-        //if(dueDate.isNotEmpty()) {
-        //     processInstanceId = camundaService.startProcess(ProcessParameters().withUser(username!!).withDueDate(dueDate))
-        // }
-
-        val tags = result.stream().map(SemanticResult::topicName).map { name: String? -> Tag(name!!) }.collect(Collectors.toList())
-        val document = Document(filename!!, filename, senderString!!, username!!, LocalDateTime.now(), tags, processInstanceId)
-        val savedDocument = storageService!!.save(document)
+        val tags = result.stream().map(SemanticResult::topicName).map { name: String? -> Tag(name!!) }
+                .collect(Collectors.toList())
+        val document = Document(filename!!, filename, senderString!!, username!!, LocalDateTime.now(), tags, processInstanceId = null)
+        documentSaveService.save(document, content, dueDate = dueDate.firstOrNull())
         return ResponseEntity.status(HttpStatus.CREATED).body(document.name)
     }
 
@@ -48,12 +44,8 @@ class UploadController(@param:Autowired private val storageService: StorageServi
     }
 
     private fun getSender(result: List<SemanticResult>): String? {
-        val sender = result.stream().filter { e: SemanticResult -> StringUtils.isNotEmpty(e.sender) }.findFirst()
-        var senderString: String? = null
-        if (sender.isPresent) {
-            senderString = sender.get().sender
-        }
-        return senderString
+        return result.filter { e: SemanticResult -> StringUtils.isNotEmpty(e.sender) }.map(SemanticResult::sender)
+                .firstOrNull()
     }
 
 }

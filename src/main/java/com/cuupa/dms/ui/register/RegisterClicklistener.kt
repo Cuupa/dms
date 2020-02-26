@@ -58,14 +58,14 @@ class RegisterClicklistener(private val registerView: RegisterView) : ComponentE
     private fun registerUser(@Autowired accessControl: AccessControl, @Autowired encryptionService: EncryptionService) {
         val salt = encryptionService.generateSalt()
         val encryptedPassword = encryptionService.getEncryptedPassword(registerView.passwordTextField.value, salt)
-        val successfull = accessControl.register(registerView.usernameTextField.value,
+        val successful = accessControl.register(registerView.usernameTextField.value,
                 encryptedPassword,
                 salt,
                 registerView.firstnameTextField.value,
                 registerView.lastnameTextField.value,
                 encryptionService.accessToken)
 
-        if (!successfull) {
+        if (!successful) {
             registerView.errorLabel.isVisible = true
         } else {
             registerView.mailService.sendConfirmationMail()

@@ -10,9 +10,9 @@ import javax.crypto.spec.PBEKeySpec
 
 class EncryptionService {
 
-    val decoder = Base64.getDecoder()
+    private val decoder: Base64.Decoder = Base64.getDecoder()
 
-    val encoder = Base64.getEncoder()
+    private val encoder: Base64.Encoder = Base64.getEncoder()
 
     @Throws(InvalidKeySpecException::class, NoSuchAlgorithmException::class)
     fun getEncryptedPassword(password: String, salt: String): String {

@@ -26,7 +26,8 @@ import com.vaadin.flow.router.Route
 import org.springframework.beans.factory.annotation.Autowired
 
 @Route(value = "inbox", layout = MainView::class)
-class Inbox(@Autowired camundaService: CamundaService, @Autowired val storageService: StorageService, @Autowired accessControl: AccessControl) : HorizontalLayout(), HasUrlParameter<String?>, DialogListener {
+class Inbox(@Autowired camundaService: CamundaService, @Autowired val storageService: StorageService, @Autowired val
+accessControl: AccessControl) : HorizontalLayout(), HasUrlParameter<String?>, DialogListener {
 
     private val doneButton = Button("Done")
     private val createTaskButton = Button("Create task")
@@ -75,7 +76,8 @@ class Inbox(@Autowired camundaService: CamundaService, @Autowired val storageSer
         val processesForOwner = camundaService.getProcessesForOwner(accessControl.principalName)
         val dataProvider = DocumentDataProvider(storageService, accessControl.principalName, processesForOwner)
         val documentGrid = InboxGrid(storageService)
-        documentPreview = InboxPreview(camundaService, documentGrid, storageService.findTagsByOwner(accessControl.principalName))
+        documentPreview = InboxPreview(camundaService, accessControl, documentGrid, storageService.findTagsByOwner(accessControl
+                .principalName))
         documentPreview.isVisible = false
         documentGrid.addSelectionListener(itemClickEventComponentEventListener)
         documentGrid.dataProvider = dataProvider
@@ -111,7 +113,7 @@ class Inbox(@Autowired camundaService: CamundaService, @Autowired val storageSer
 
         doneButton.themeName = UIConstants.primaryTheme
         doneButton.isEnabled = false
-        doneButton.addClickListener { event -> dialog.open() }
+        doneButton.addClickListener { dialog.open() }
         createTaskButton.themeName = UIConstants.primaryTheme
         createTaskButton.isEnabled = false
     }

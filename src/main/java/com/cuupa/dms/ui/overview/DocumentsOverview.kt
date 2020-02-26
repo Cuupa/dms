@@ -21,11 +21,13 @@ import org.springframework.beans.factory.annotation.Autowired
 
 @Route(value = "documents", layout = MainView::class)
 @RouteAlias(value = "", layout = MainView::class)
-class DocumentsOverview(@Autowired storageService: StorageService, @Autowired accessControl: AccessControl) : HorizontalLayout(), HasUrlParameter<String?> {
+class DocumentsOverview(@Autowired storageService: StorageService, @Autowired val accessControl: AccessControl) :
+        HorizontalLayout(), HasUrlParameter<String?> {
 
     private val documentPreview: DocumentPreview
     private val horizontalLayout: HorizontalLayout
     private val dataProvider: DocumentDataProvider
+
     private val itemClickEventComponentEventListener: SelectionListener<Grid<Document?>?, Document?>
         get() = SelectionListener { event: SelectionEvent<Grid<Document?>?, Document?> ->
             if (event.firstSelectedItem.isPresent) {
@@ -49,7 +51,8 @@ class DocumentsOverview(@Autowired storageService: StorageService, @Autowired ac
         setSizeFull()
         dataProvider = DocumentDataProvider(storageService, accessControl.principalName)
         val documentGrid = DocumentGrid()
-        documentPreview = DocumentPreview(documentGrid, storageService.findTagsByOwner(accessControl.principalName))
+        documentPreview = DocumentPreview(accessControl, documentGrid, storageService.findTagsByOwner(accessControl
+                .principalName))
         documentPreview.isVisible = false
         documentGrid.addSelectionListener(itemClickEventComponentEventListener)
         documentGrid.dataProvider = dataProvider

@@ -1,4 +1,4 @@
-package com.cuupa.dms.ui.documentviews
+package com.cuupa.dms.ui.documentviews.pdf
 
 import com.vaadin.flow.component.HasSize
 import com.vaadin.flow.dom.Element

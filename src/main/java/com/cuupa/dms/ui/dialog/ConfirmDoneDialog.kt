@@ -16,9 +16,9 @@ class ConfirmDoneDialog(vararg components: Component?) : Dialog(*components) {
         this.component = component
     }
 
-    val messageLabel = Label("Do you want to mark the document as 'done'?")
-    val confirmButton = Button("Confirm")
-    val cancelButton = Button("Cancel")
+    private val messageLabel = Label("Do you want to mark the document as 'done'?")
+    private val confirmButton = Button("Confirm")
+    private val cancelButton = Button("Cancel")
 
     init {
         confirmButton.themeName = UIConstants.primaryTheme

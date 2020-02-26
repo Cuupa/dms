@@ -21,7 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired
 @Route("register")
 @PageTitle("Register")
 @CssImport("./styles/shared-styles.css")
-class RegisterView(@param:Autowired val accessControl: AccessControl, @param:Autowired val encryptionService: EncryptionService, @param:Autowired val mailService: MailService) : FlexLayout() {
+class RegisterView(@param:Autowired val accessControl: AccessControl, @param:Autowired val encryptionService:
+EncryptionService, @param:Autowired val mailService: MailService) : FlexLayout() {
 
     val errorLabel = Label(UIConstants.usernameAlreadyTaken)
     val usernameTextField = TextField(UIConstants.email)

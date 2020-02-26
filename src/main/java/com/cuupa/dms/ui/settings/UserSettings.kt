@@ -31,16 +31,29 @@ class UserSettings(@Autowired databaseAccessControl: DatabaseAccessControl, @Aut
     private val passwordTextField = TextField(UIConstants.newpassword)
     private val passwordMatchingTextField = TextField(UIConstants.confirmpassword)
 
-    private fun saveChanges(databaseAccessControl: DatabaseAccessControl, encryptionService: EncryptionService, user: User) {
-        user.firstname = firstnameTextField.value
-        user.lastname = lastnameTextField.value
-        val accessToken = accessTokenTextField.value
-        if (passwordTextField.value.isNotBlank()) {
-            val newSalt = encryptionService.generateSalt()
-            val encryptedPassword = encryptionService.getEncryptedPassword(passwordTextField.value, newSalt)
-            databaseAccessControl.save(user, encryptedPassword, newSalt, accessToken)
+    private fun saveChanges(databaseAccessControl: DatabaseAccessControl, encryptionService: EncryptionService,
+                            user: User) {
+        val passwordNotMatching = isPasswordNotMatching(passwordTextField, passwordMatchingTextField)
+        passwordMatchingTextField.isInvalid = passwordNotMatching
+        if (!passwordNotMatching) {
+            user.firstname = firstnameTextField.value
+            user.lastname = lastnameTextField.value
+            val accessToken = accessTokenTextField.value
+            if (passwordTextField.value.isNotBlank()) {
+                val newSalt = encryptionService.generateSalt()
+                val encryptedPassword = encryptionService.getEncryptedPassword(passwordTextField.value, newSalt)
+                databaseAccessControl.save(user, encryptedPassword, newSalt, accessToken)
+            } else {
+                databaseAccessControl.save(user, accessToken)
+            }
+        }
+    }
+
+    private fun isPasswordNotMatching(passwordTextField: TextField, passwordMatchingTextField: TextField): Boolean {
+        return if (passwordMatchingTextField.value.isNotEmpty() && passwordTextField.value.isNotEmpty()) {
+            passwordMatchingTextField.value != passwordTextField.value
         } else {
-            databaseAccessControl.save(user, accessToken)
+            false
         }
     }
 
@@ -109,9 +122,9 @@ class UserSettings(@Autowired databaseAccessControl: DatabaseAccessControl, @Aut
             }
             saveButton.themeName = UIConstants.primaryTheme
             verticalLayout.add(accordion)
-            val horizontalLayout = HorizontalLayout(cancelButton, saveButton)
-            verticalLayout.add(horizontalLayout)
+            verticalLayout.add(HorizontalLayout(cancelButton, saveButton))
             add(verticalLayout)
+            passwordMatchingTextField.errorMessage = "Passwords are not matching"
         }
     }
 }
