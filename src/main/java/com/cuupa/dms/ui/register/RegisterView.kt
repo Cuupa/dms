@@ -27,7 +27,7 @@ EncryptionService, @param:Autowired val mailService: MailService) : FlexLayout()
     val errorLabel = Label(UIConstants.usernameAlreadyTaken)
     val usernameTextField = TextField(UIConstants.email)
     val passwordTextField = PasswordField(UIConstants.password)
-    val passwordConfirmationTextField = TextField(UIConstants.confirmpassword)
+    val passwordConfirmationTextField = PasswordField(UIConstants.confirmpassword)
     val firstnameTextField = TextField(UIConstants.firstname)
     val lastnameTextField = TextField(UIConstants.lastname)
 
@@ -42,6 +42,7 @@ EncryptionService, @param:Autowired val mailService: MailService) : FlexLayout()
         val verticalLayout = VerticalLayout(errorLabel,
                 usernameTextField,
                 passwordTextField,
+                passwordConfirmationTextField,
                 firstnameTextField,
                 lastnameTextField)
         verticalLayout.setSizeFull()

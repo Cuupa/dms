@@ -4,7 +4,7 @@ logging:
 
 services.remote:
   semantic:
-    url: "http://localhost:8081/classify"
+    url: "http://10.80.22.5:8081/classificator/classify"
 
 spring:
   data:

@@ -6,6 +6,6 @@ interface MongoDBDocumentStorage : MongoRepository<DBDocument?, Long?> {
 
     fun findDocumentsByOwner(owner: String?): List<DBDocument?>
 
-    fun findDBDocumentsByOwnerAndAndProcessInstanceId(owner: String?, processInstanceId: String?): DBDocument
+    fun findDBDocumentsByOwnerAndAndProcessInstanceId(owner: String?, processInstanceId: String?): DBDocument?
 
 }

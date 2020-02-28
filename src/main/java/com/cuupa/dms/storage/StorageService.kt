@@ -63,7 +63,10 @@ class StorageService(private val documentStorage: MongoDBDocumentStorage, privat
         return if (owner.isNullOrBlank()) {
             listOf()
         } else {
-            processInstanceIds.map { processInstanceId -> documentStorage.findDBDocumentsByOwnerAndAndProcessInstanceId(owner, processInstanceId) }
+            processInstanceIds.map { processInstanceId ->
+                documentStorage
+                        .findDBDocumentsByOwnerAndAndProcessInstanceId(owner, processInstanceId)
+            }.filterNotNull()
                     .map { document: DBDocument? -> DocumentMapper.mapToGuiObject(document!!) }
         }
     }

@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired
 
 @Route(value = "documents", layout = MainView::class)
 @RouteAlias(value = "", layout = MainView::class)
-class DocumentsOverview(@Autowired storageService: StorageService, @Autowired val accessControl: AccessControl) :
+class DocumentsOverview(@Autowired val storageService: StorageService, @Autowired val accessControl: AccessControl) :
         HorizontalLayout(), HasUrlParameter<String?> {
 
     private val documentPreview: DocumentPreview
