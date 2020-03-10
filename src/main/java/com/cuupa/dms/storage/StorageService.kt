@@ -26,7 +26,7 @@ class StorageService(private val documentStorage: MongoDBDocumentStorage, privat
         saveNewTags(tags, tagsInDB)
         document.tags = tags
 
-        val maxDocumentRevision = documentStorage.findDBDocumentByName(document.name).maxBy { it.revision }
+        val maxDocumentRevision = documentStorage.findDBDocumentsByName(document.name).maxBy { it.revision }
         val documentToSave = DocumentMapper.mapToEntity(document)
 
         if (maxDocumentRevision != null) {
@@ -77,6 +77,15 @@ class StorageService(private val documentStorage: MongoDBDocumentStorage, privat
         }
     }
 
+    fun findDocumentsByName(name: String): List<Document> {
+        return if (name.isBlank()) {
+            listOf()
+        } else {
+            documentStorage.findDBDocumentsByName(name)
+                    .map { document: DBDocument -> DocumentMapper.mapToGuiObject(document) }
+        }
+    }
+
     fun findTagsByOwner(owner: String): List<Tag> {
         return tagStorage.findTagsByOwner(owner)
                 .stream()
@@ -114,4 +123,5 @@ class StorageService(private val documentStorage: MongoDBDocumentStorage, privat
         return resultListFromDb.map { document: DBDocument -> DocumentMapper.mapToGuiObject(document) }
 
     }
+
 }

@@ -74,8 +74,9 @@ accessControl: AccessControl) : HorizontalLayout(), HasUrlParameter<String?>, Di
         val processesForOwner = camundaService.getProcessesForOwner(accessControl.principalName)
         val dataProvider = DocumentDataProvider(storageService, accessControl.principalName, processesForOwner)
         val documentGrid = InboxGrid(storageService)
-        documentPreview = InboxPreview(camundaService, accessControl, documentGrid, storageService.findTagsByOwner(accessControl
-                .principalName))
+        documentPreview = InboxPreview(camundaService, storageService, accessControl, documentGrid, storageService
+                .findTagsByOwner(accessControl
+                        .principalName))
         documentPreview.isVisible = false
         documentGrid.addSelectionListener(itemClickEventComponentEventListener)
         documentGrid.dataProvider = dataProvider
