@@ -22,10 +22,18 @@ class StorageService(private val documentStorage: MongoDBDocumentStorage, privat
     fun save(document: Document): DBDocument {
         val tags = document.tags
         val tagsWithOwner = tags.map { tag: Tag -> tag.copy(owner = tag.owner) }
-        var tagsInDB = getTagsFromDB(tagsWithOwner)
+        val tagsInDB = getTagsFromDB(tagsWithOwner)
         saveNewTags(tags, tagsInDB)
         document.tags = tags
+
+        val maxDocumentRevision = documentStorage.findDBDocumentByName(document.name).maxBy { it.revision }
         val documentToSave = DocumentMapper.mapToEntity(document)
+
+        if (maxDocumentRevision != null) {
+            documentToSave.revision = maxDocumentRevision.revision.inc()
+        } else {
+            documentToSave.revision = 1
+        }
         return documentStorage.insert(documentToSave)
     }
 
@@ -55,19 +63,17 @@ class StorageService(private val documentStorage: MongoDBDocumentStorage, privat
     fun findDocumentsByOwner(owner: String?): List<Document> {
         return if (owner.isNullOrBlank()) {
             listOf()
-        } else documentStorage.findDocumentsByOwner(owner).filterNotNull()
-                .map { document: DBDocument? -> DocumentMapper.mapToGuiObject(document!!) }
+        } else findRevision(documentStorage.findDocumentsByOwnerOrderByName(owner).filterNotNull())
     }
 
     fun findDocumentsByOwnerAndProcessInstanceId(owner: String?, processInstanceIds: List<String>): List<Document> {
         return if (owner.isNullOrBlank()) {
             listOf()
         } else {
-            processInstanceIds.map { processInstanceId ->
+            findRevision(processInstanceIds.map { processInstanceId ->
                 documentStorage
                         .findDBDocumentsByOwnerAndAndProcessInstanceId(owner, processInstanceId)
-            }.filterNotNull()
-                    .map { document: DBDocument? -> DocumentMapper.mapToGuiObject(document!!) }
+            }.filterNotNull())
         }
     }
 
@@ -84,5 +90,28 @@ class StorageService(private val documentStorage: MongoDBDocumentStorage, privat
             selectedDocument.processInstanceId = null
             save(selectedDocument)
         }
+    }
+
+    private fun findRevision(documents: List<DBDocument>): List<Document> {
+        var lastDocument: DBDocument? = null
+        val resultListFromDb: MutableList<DBDocument> = mutableListOf()
+        for (document in documents) {
+            if (lastDocument == null) {
+                lastDocument = document
+            }
+            if (lastDocument.name == document.name) {
+                if (document.revision > lastDocument.revision) {
+                    lastDocument = document
+                }
+            } else {
+                resultListFromDb.add(lastDocument)
+                lastDocument = document
+            }
+        }
+        if (!resultListFromDb.contains(lastDocument) && lastDocument != null) {
+            resultListFromDb.add(lastDocument)
+        }
+        return resultListFromDb.map { document: DBDocument -> DocumentMapper.mapToGuiObject(document) }
+
     }
 }

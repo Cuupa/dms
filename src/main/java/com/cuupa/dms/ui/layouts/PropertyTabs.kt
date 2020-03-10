@@ -1,4 +1,4 @@
-package com.cuupa.dms.ui
+package com.cuupa.dms.ui.layouts
 
 import com.cuupa.dms.UIConstants
 import com.vaadin.flow.component.Component
@@ -11,17 +11,18 @@ import java.util.stream.Collectors
 import java.util.stream.Stream
 
 class PropertyTabs(previewLayout: VerticalLayout,
-                   propertyLayout: PropertyLayout) : VerticalLayout() {
+                   propertyLayout: PropertyLayout,
+                   versionsLayout: VerticalLayout) : VerticalLayout() {
 
     init {
-        val tabPreview = Tab()
-        tabPreview.label = UIConstants.preview
-        val tabProperties = Tab()
-        tabProperties.label = UIConstants.properties
-        val tabs = Tabs(tabPreview, tabProperties)
+        val tabPreview = Tab(UIConstants.preview)
+        val tabProperties = Tab(UIConstants.properties)
+        val tabVersions = Tab(UIConstants.versions)
+        val tabs = Tabs(tabPreview, tabProperties, tabVersions)
         val tabsToPages: MutableMap<Tab, Component> = HashMap()
         tabsToPages[tabPreview] = previewLayout
         tabsToPages[tabProperties] = propertyLayout
+        tabsToPages[tabVersions] = versionsLayout
         val pagesShown: MutableSet<Component?> = Stream.of(previewLayout).collect(Collectors.toSet())
         tabs.addSelectedChangeListener {
             pagesShown.forEach(Consumer { page: Component? -> page!!.isVisible = false })

@@ -15,7 +15,6 @@ open class DsmApplication : SpringBootServletInitializer() {
     //@PostConstruct
     fun setup() {
         storage!!.deleteAll()
-
     }
 
     companion object {

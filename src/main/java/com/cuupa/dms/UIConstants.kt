@@ -16,6 +16,7 @@ object UIConstants {
     const val search = "Search"
     const val preview = "Preview"
     const val properties = "Properties"
+    const val versions = "Versions"
 
     const val filename = "Filename"
     const val from = "From"

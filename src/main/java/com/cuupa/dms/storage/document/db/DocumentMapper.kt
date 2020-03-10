@@ -11,7 +11,9 @@ object DocumentMapper {
                 document.sender,
                 document.owner,
                 document.createDate,
-                document.tags.map(Tag::name), document.processInstanceId)
+                document.tags.map(Tag::name), document.processInstanceId,
+                document.revision
+        )
     }
 
     fun mapToGuiObject(document: DBDocument): Document {
@@ -22,7 +24,8 @@ object DocumentMapper {
                 document.createDate,
                 document.tags
                         .map { tag: String? -> Tag(tag!!, document.owner) },
-                document.processInstanceId
+                document.processInstanceId,
+                document.revision
         )
     }
 }

@@ -19,13 +19,11 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.data.selection.SelectionEvent
 import com.vaadin.flow.data.selection.SelectionListener
-import com.vaadin.flow.router.BeforeEvent
-import com.vaadin.flow.router.HasUrlParameter
-import com.vaadin.flow.router.OptionalParameter
-import com.vaadin.flow.router.Route
+import com.vaadin.flow.router.*
 import org.springframework.beans.factory.annotation.Autowired
 
 @Route(value = "inbox", layout = MainView::class)
+@RouteAlias(value = "", layout = MainView::class)
 class Inbox(@Autowired camundaService: CamundaService, @Autowired val storageService: StorageService, @Autowired val
 accessControl: AccessControl) : HorizontalLayout(), HasUrlParameter<String?>, DialogListener {
 

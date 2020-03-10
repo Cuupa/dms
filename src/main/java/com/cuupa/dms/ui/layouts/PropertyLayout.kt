@@ -1,4 +1,4 @@
-package com.cuupa.dms.ui
+package com.cuupa.dms.ui.layouts
 
 import com.cuupa.dms.UIConstants
 import com.cuupa.dms.storage.document.Document

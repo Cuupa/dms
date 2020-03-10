@@ -5,7 +5,7 @@ import com.cuupa.dms.authentication.AccessControl
 import com.cuupa.dms.storage.document.Document
 import com.cuupa.dms.storage.tag.Tag
 import com.cuupa.dms.ui.documentviews.DocumentView
-import com.cuupa.dms.ui.overview.DocumentsOverview
+import com.cuupa.dms.ui.inbox.Inbox
 import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.icon.VaadinIcon
@@ -95,17 +95,19 @@ class PreviewAndPropertiesLayout(@Autowired val documentSaveService: DocumentSav
                 documentSaveService.save(Document(
                         filename = property.getFilename(),
                         name = property.getFilename(),
-                        createDate = LocalDateTime.of(property.getDate(), property.getTime()),
-                        owner = accessControl.principalName,
                         sender = property.getFrom(),
+                        owner = accessControl.principalName,
+                        createDate = LocalDateTime.of(property.getDate(), property.getTime()),
                         tags = property.getTags().map { name: String -> Tag(name) },
-                        processInstanceId = null),
+                        processInstanceId = null,
+                        revision = -1
+                ),
                         content = property.content,
                         dueDate = property.getDueDate())
             }
-            save.ui.ifPresent { ui: UI -> ui.navigate(DocumentsOverview.VIEW_NAME) }
+            save.ui.ifPresent { ui: UI -> ui.navigate(Inbox.VIEW_NAME) }
         }
-        cancel.addClickListener { cancel.ui.ifPresent { ui: UI -> ui.navigate(DocumentsOverview.VIEW_NAME) } }
+        cancel.addClickListener { cancel.ui.ifPresent { ui: UI -> ui.navigate(Inbox.VIEW_NAME) } }
     }
 
     init {

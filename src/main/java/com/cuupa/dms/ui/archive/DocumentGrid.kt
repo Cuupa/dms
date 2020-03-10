@@ -1,4 +1,4 @@
-package com.cuupa.dms.ui.overview
+package com.cuupa.dms.ui.archive
 
 import com.cuupa.dms.service.LocalDateTimeFormatter
 import com.cuupa.dms.storage.document.Document

@@ -2,9 +2,9 @@ package com.cuupa.dms.ui
 
 import com.cuupa.dms.UIConstants
 import com.cuupa.dms.authentication.AccessControl
+import com.cuupa.dms.ui.archive.ArchiveOverview
 import com.cuupa.dms.ui.fileupload.FileUploadOverview
 import com.cuupa.dms.ui.inbox.Inbox
-import com.cuupa.dms.ui.overview.DocumentsOverview
 import com.cuupa.dms.ui.settings.UserSettings
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.ComponentEventListener
@@ -117,8 +117,8 @@ class MainView(@Autowired accessControl: AccessControl) : AppLayout(), RouterLay
 
         val menuLayout = VerticalLayout()
         menuLayout.add(createMenuLink(Inbox::class.java, Inbox.VIEW_NAME, VaadinIcon.INBOX.create()))
-        menuLayout.add(createMenuLink(DocumentsOverview::class.java,
-                DocumentsOverview.VIEW_NAME,
+        menuLayout.add(createMenuLink(ArchiveOverview::class.java,
+                ArchiveOverview.VIEW_NAME,
                 VaadinIcon.MAILBOX.create()))
         menuLayout.add(createMenuLink(AdressesOverview::class.java,
                 AdressesOverview.VIEW_NAME,

@@ -5,15 +5,14 @@ import com.cuupa.dms.authentication.AccessControl
 import com.cuupa.dms.service.CamundaService
 import com.cuupa.dms.storage.document.Document
 import com.cuupa.dms.storage.tag.Tag
-import com.cuupa.dms.ui.PropertyLayout
+import com.cuupa.dms.ui.layouts.PropertyLayout
 import com.vaadin.flow.component.datepicker.DatePicker
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDate
 
-class InboxPropertiesLayout(@Autowired val camundaService: CamundaService, @Autowired val accessControl: AccessControl) : PropertyLayout
-                                                                                                                          () {
+class InboxPropertiesLayout(@Autowired val camundaService: CamundaService, @Autowired val accessControl: AccessControl) : PropertyLayout() {
 
     private lateinit var document: Document
 
@@ -31,7 +30,7 @@ class InboxPropertiesLayout(@Autowired val camundaService: CamundaService, @Auto
                     list?.map { variableInstance -> variableInstance.value }?.firstOrNull()
                 }
 
-        if (dueDateString != null && dueDateString.toString().isNullOrBlank()) {
+        if (dueDateString != null && dueDateString.toString().isBlank()) {
             dueDate.value = LocalDate.parse(dueDateString.toString())
         }
 

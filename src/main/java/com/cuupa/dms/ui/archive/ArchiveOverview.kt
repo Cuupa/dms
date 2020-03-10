@@ -1,4 +1,4 @@
-package com.cuupa.dms.ui.overview
+package com.cuupa.dms.ui.archive
 
 import com.cuupa.dms.Constants
 import com.cuupa.dms.UIConstants
@@ -16,12 +16,14 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.data.selection.SelectionEvent
 import com.vaadin.flow.data.selection.SelectionListener
-import com.vaadin.flow.router.*
+import com.vaadin.flow.router.BeforeEvent
+import com.vaadin.flow.router.HasUrlParameter
+import com.vaadin.flow.router.OptionalParameter
+import com.vaadin.flow.router.Route
 import org.springframework.beans.factory.annotation.Autowired
 
 @Route(value = "documents", layout = MainView::class)
-@RouteAlias(value = "", layout = MainView::class)
-class DocumentsOverview(@Autowired val storageService: StorageService, @Autowired val accessControl: AccessControl) :
+class ArchiveOverview(@Autowired val storageService: StorageService, @Autowired val accessControl: AccessControl) :
         HorizontalLayout(), HasUrlParameter<String?> {
 
     private val documentPreview: DocumentPreview

@@ -64,9 +64,9 @@ MultiFileMemoryBuffer, private val properties: MutableList<FileUploadProperties>
     }
 
     private fun getDueDate(result: List<SemanticResult>): List<String> {
-        return result.filter { localResult ->
-            localResult.metaData.filter { metadata -> metadata.name == "dueDate" }.any()
-        }.flatMap { metaDataList -> metaDataList.metaData.map { metadata -> metadata.value } }
+        return result.map { localResult ->
+            localResult.metaData.filter { metadata -> metadata.name == "dueDate" }.first()
+        }.map { it.value }
     }
 
     private fun getBytes(buffer: MultiFileMemoryBuffer, event: SucceededEvent): ByteArray {

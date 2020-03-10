@@ -4,8 +4,10 @@ import org.springframework.data.mongodb.repository.MongoRepository
 
 interface MongoDBDocumentStorage : MongoRepository<DBDocument?, Long?> {
 
-    fun findDocumentsByOwner(owner: String?): List<DBDocument?>
+    fun findDocumentsByOwnerOrderByName(owner: String?): List<DBDocument?>
 
     fun findDBDocumentsByOwnerAndAndProcessInstanceId(owner: String?, processInstanceId: String?): DBDocument?
+
+    fun findDBDocumentByName(name: String?): List<DBDocument>
 
 }

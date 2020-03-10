@@ -1,9 +1,9 @@
-package com.cuupa.dms.ui.overview
+package com.cuupa.dms.ui.archive
 
 import com.cuupa.dms.authentication.AccessControl
 import com.cuupa.dms.storage.document.Document
 import com.cuupa.dms.storage.tag.Tag
-import com.cuupa.dms.ui.PropertyLayout
+import com.cuupa.dms.ui.layouts.PropertyLayout
 import org.springframework.beans.factory.annotation.Autowired
 
 class DocumentPropertiesLayout(@Autowired val accessControl: AccessControl) : PropertyLayout() {

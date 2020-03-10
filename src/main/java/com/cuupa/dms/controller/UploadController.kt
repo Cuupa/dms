@@ -32,7 +32,8 @@ ExternSemanticService, @param:Autowired private val uploadValidator: UploadValid
 
         val tags = result.stream().map(SemanticResult::topicName).map { name: String? -> Tag(name!!) }
                 .collect(Collectors.toList())
-        val document = Document(filename!!, filename, senderString!!, username!!, LocalDateTime.now(), tags, processInstanceId = null)
+        val document = Document(filename!!, filename, senderString!!, username!!, LocalDateTime.now(), tags,
+                processInstanceId = null, revision = -1)
         documentSaveService.save(document, content, dueDate = dueDate.firstOrNull())
         return ResponseEntity.status(HttpStatus.CREATED).body(document.name)
     }
