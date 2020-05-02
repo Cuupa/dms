@@ -48,13 +48,14 @@ import org.springframework.beans.factory.annotation.Autowired
 class MainView(@Autowired accessControl: AccessControl) : AppLayout(), RouterLayout {
 
     private fun createUserButton(): Button {
-        val userButton = Button(UIConstants.settings, VaadinIcon.USER.create())
+        val userButton = Button(getTranslation(UIConstants.settings), VaadinIcon.USER.create())
         userButton.addClickListener { userButton.ui.ifPresent { ui: UI -> ui.navigate(UserSettings.VIEW_NAME) } }
         return userButton
     }
 
     private fun createUploadButton(): Button {
-        val uploadButton = Button(UIConstants.upload, VaadinIcon.UPLOAD.create(), ComponentEventListener { })
+        val uploadButton = Button(getTranslation(UIConstants.upload), VaadinIcon.UPLOAD.create(),
+                ComponentEventListener { })
         uploadButton.addClickListener {
             uploadButton.ui
                     .ifPresent { ui: UI -> ui.navigate(FileUploadOverview.VIEW_NAME) }

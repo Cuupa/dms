@@ -97,7 +97,7 @@ accessControl: AccessControl) : HorizontalLayout(), HasUrlParameter<String?>, Di
         filter.isClearButtonVisible = true
         val searchLayout = HorizontalLayout()
         searchLayout.width = UIConstants.maxSize
-        val searchButton = Button(UIConstants.search, VaadinIcon.SEARCH.create())
+        val searchButton = Button(getTranslation("search"), VaadinIcon.SEARCH.create())
         searchButton.themeName = UIConstants.primaryTheme
         searchButton.addClickListener { dataProvider.filter = filter.value }
         searchButton.width = "10%"

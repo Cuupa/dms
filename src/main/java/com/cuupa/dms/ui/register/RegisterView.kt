@@ -24,19 +24,19 @@ import org.springframework.beans.factory.annotation.Autowired
 class RegisterView(@param:Autowired val accessControl: AccessControl, @param:Autowired val encryptionService:
 EncryptionService, @param:Autowired val mailService: MailService) : FlexLayout() {
 
-    val errorLabel = Label(UIConstants.usernameAlreadyTaken)
-    val usernameTextField = TextField(UIConstants.email)
-    val passwordTextField = PasswordField(UIConstants.password)
-    val passwordConfirmationTextField = PasswordField(UIConstants.confirmpassword)
-    val firstnameTextField = TextField(UIConstants.firstname)
-    val lastnameTextField = TextField(UIConstants.lastname)
+    val errorLabel = Label(getTranslation("usernameAlreadyTaken"))
+    val usernameTextField = TextField(getTranslation("email"))
+    val passwordTextField = PasswordField(getTranslation("password"))
+    val passwordConfirmationTextField = PasswordField(getTranslation("confirmpassword"))
+    val firstnameTextField = TextField(getTranslation("firstname"))
+    val lastnameTextField = TextField(getTranslation("lastname"))
 
     init {
         setSizeFull()
         errorLabel.isVisible = false
-        usernameTextField.errorMessage = UIConstants.missingRequiredField
-        passwordTextField.errorMessage = UIConstants.missingRequiredField
-        passwordConfirmationTextField.errorMessage = UIConstants.passwordsNotMatching
+        usernameTextField.errorMessage = getTranslation("missingRequiredField")
+        passwordTextField.errorMessage = getTranslation("missingRequiredField")
+        passwordConfirmationTextField.errorMessage = getTranslation("passwordsNotMatching")
         justifyContentMode = JustifyContentMode.CENTER
         alignItems = FlexComponent.Alignment.CENTER
         val verticalLayout = VerticalLayout(errorLabel,
@@ -48,9 +48,9 @@ EncryptionService, @param:Autowired val mailService: MailService) : FlexLayout()
         verticalLayout.setSizeFull()
         verticalLayout.justifyContentMode = JustifyContentMode.CENTER
         verticalLayout.alignItems = FlexComponent.Alignment.CENTER
-        val cancelButton = Button(UIConstants.cancel)
+        val cancelButton = Button(getTranslation("cancel"))
         cancelButton.addClickListener { ui.get().navigate("") }
-        val registerButton = Button(UIConstants.register)
+        val registerButton = Button(getTranslation("register"))
         registerButton.addClickListener(RegisterClicklistener(this))
         registerButton.themeName = UIConstants.primaryTheme
         val buttonLayout = HorizontalLayout(cancelButton, registerButton)

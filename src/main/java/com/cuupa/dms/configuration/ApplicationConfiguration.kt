@@ -7,6 +7,7 @@ import com.cuupa.dms.controller.UploadValidator
 import com.cuupa.dms.database.user.UserRepository
 import com.cuupa.dms.service.EncryptionService
 import com.cuupa.dms.service.MailService
+import com.cuupa.dms.translation.TranslationProvider
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -42,6 +43,11 @@ open class ApplicationConfiguration {
     @Bean
     open fun camundaInitListener(): CamundaInitListener {
         return CamundaInitListener()
+    }
+
+    @Bean
+    open fun i18nProvider(): TranslationProvider {
+        return TranslationProvider()
     }
 
 }

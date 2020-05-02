@@ -36,7 +36,7 @@ class RegisterClicklistener(private val registerView: RegisterView) : ComponentE
     }
 
     private fun showErrorNoMail() {
-        registerView.usernameTextField.errorMessage = UIConstants.provideValidMailaddress
+        registerView.usernameTextField.errorMessage = registerView.getTranslation(UIConstants.provideValidMailaddress)
         registerView.usernameTextField.isInvalid = true
     }
 
@@ -78,5 +78,4 @@ class RegisterClicklistener(private val registerView: RegisterView) : ComponentE
         return registerView.usernameTextField.value.isNotBlank() &&
                 registerView.passwordTextField.value.isNotBlank()
     }
-
 }

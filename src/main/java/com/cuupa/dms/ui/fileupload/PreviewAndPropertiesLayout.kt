@@ -18,10 +18,10 @@ import java.util.*
 
 class PreviewAndPropertiesLayout(@Autowired val documentSaveService: DocumentSaveService, @Autowired val accessControl: AccessControl) : VerticalLayout() {
 
-    private val previousButton = Button(UIConstants.previous)
-    private val nextButton = Button(UIConstants.next)
-    private val save = Button(UIConstants.save)
-    private val cancel = Button(UIConstants.cancel)
+    private val previousButton = Button(getTranslation("previous"))
+    private val nextButton = Button(getTranslation("next"))
+    private val save = Button(getTranslation("save"))
+    private val cancel = Button(getTranslation("cancel"))
     private val contentLayout = HorizontalLayout()
 
     val properties: MutableList<FileUploadProperties> = Vector()

@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "services.remote.semantic.url",
+      "type": "java.lang.String",
+      "description": "Description for services.remote.semantic.url."
+    }
+  ]
+}

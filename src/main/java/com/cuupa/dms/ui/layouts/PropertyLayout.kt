@@ -13,10 +13,10 @@ import com.vaadin.flow.component.timepicker.TimePicker
 
 abstract class PropertyLayout : VerticalLayout() {
 
-    protected val filename = TextField(UIConstants.filename)
-    protected val sender = TextField(UIConstants.from)
-    protected val date = DatePicker(UIConstants.date)
-    protected val time = TimePicker(UIConstants.time)
+    protected val filename = TextField(getTranslation("filename"))
+    protected val sender = TextField(getTranslation("from"))
+    protected val date = DatePicker(getTranslation("date"))
+    protected val time = TimePicker(getTranslation("time"))
     protected val tags = MultiSelectListBox<Tag>()
 
     abstract fun setDocument(document: Document, tags: List<Tag>)
@@ -31,12 +31,7 @@ abstract class PropertyLayout : VerticalLayout() {
         layoutFilename.add(filename)
         filename.minWidth = UIConstants.maxSize
         layoutFilename.justifyContentMode = FlexComponent.JustifyContentMode.START
-        val layoutSender = HorizontalLayout()
-        layoutSender.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER)
-        layoutSender.minWidth = UIConstants.maxSize
-        sender.minWidth = UIConstants.maxSize
-        layoutSender.add(sender)
-        layoutSender.justifyContentMode = FlexComponent.JustifyContentMode.START
+        val layoutSender = getLayout()
         val layoutDateAndTime = HorizontalLayout()
         date.minWidth = UIConstants.halfSize
         time.minWidth = UIConstants.halfSize
@@ -47,12 +42,17 @@ abstract class PropertyLayout : VerticalLayout() {
         layoutDate.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER)
         layoutDate.add(layoutDateAndTime)
         layoutDate.justifyContentMode = FlexComponent.JustifyContentMode.START
-        val layoutTags = HorizontalLayout()
-        layoutTags.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER)
-        layoutTags.minWidth = UIConstants.maxSize
-        tags.minWidth = UIConstants.maxSize
-        layoutTags.add(tags)
-        layoutTags.justifyContentMode = FlexComponent.JustifyContentMode.START
-        add(layoutFilename, layoutSender, layoutDate, layoutTags)
+        val layoutTags = getLayout()
+        add(layoutFilename, layoutSender, layoutDateAndTime, layoutTags)
+    }
+
+    private fun getLayout(): HorizontalLayout {
+        val layout = HorizontalLayout()
+        layout.setVerticalComponentAlignment(FlexComponent.Alignment.CENTER)
+        layout.minWidth = UIConstants.maxSize
+        sender.minWidth = UIConstants.maxSize
+        layout.add(sender)
+        layout.justifyContentMode = FlexComponent.JustifyContentMode.START
+        return layout
     }
 }

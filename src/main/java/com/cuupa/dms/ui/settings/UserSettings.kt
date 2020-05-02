@@ -25,11 +25,11 @@ import org.springframework.beans.factory.annotation.Autowired
 @Route(value = "user", layout = MainView::class)
 class UserSettings(@Autowired databaseAccessControl: DatabaseAccessControl, @Autowired encryptionService: EncryptionService) : HorizontalLayout(), HasUrlParameter<String?> {
 
-    private val firstnameTextField = TextField(UIConstants.firstname)
-    private val lastnameTextField = TextField(UIConstants.lastname)
-    private val accessTokenTextField = TextField(UIConstants.accesstoken)
-    private val passwordTextField = TextField(UIConstants.newpassword)
-    private val passwordMatchingTextField = TextField(UIConstants.confirmpassword)
+    private val firstnameTextField = TextField(getTranslation("firstname"))
+    private val lastnameTextField = TextField(getTranslation("lastname"))
+    private val accessTokenTextField = TextField(getTranslation("accesstoken"))
+    private val passwordTextField = TextField(getTranslation("newpassword"))
+    private val passwordMatchingTextField = TextField(getTranslation("confirmpassword"))
 
     private fun saveChanges(databaseAccessControl: DatabaseAccessControl, encryptionService: EncryptionService,
                             user: User) {
@@ -63,7 +63,7 @@ class UserSettings(@Autowired databaseAccessControl: DatabaseAccessControl, @Aut
         accessTokenTextField.isReadOnly = true
         accessTokenTextField.value = databaseAccessControl.getAccessToken(user.username)
         accessTokenTextField.width = UIConstants.maxSize
-        val button = Button(UIConstants.generatenewaccesstoken, VaadinIcon.REFRESH.create())
+        val button = Button(getTranslation("generatenewaccesstoken"), VaadinIcon.REFRESH.create())
         horizontalLayout.add(accessTokenTextField, button)
         horizontalLayout.defaultVerticalComponentAlignment = FlexComponent.Alignment.END
         return horizontalLayout
@@ -83,7 +83,7 @@ class UserSettings(@Autowired databaseAccessControl: DatabaseAccessControl, @Aut
     private fun getUsersettingsLayout(user: User): Component {
         val userSettingsLayout = VerticalLayout()
         userSettingsLayout.width = UIConstants.maxSize
-        val textFieldUsername = TextField(UIConstants.username)
+        val textFieldUsername = TextField(getTranslation("username"))
         textFieldUsername.isEnabled = false
         textFieldUsername.value = user.username
         textFieldUsername.width = UIConstants.maxSize
@@ -108,8 +108,8 @@ class UserSettings(@Autowired databaseAccessControl: DatabaseAccessControl, @Aut
             val verticalLayout = VerticalLayout()
             verticalLayout.setSizeFull()
             accordion.open(0)
-            accordion.add(UIConstants.usersettings, getUsersettingsLayout(user))
-            accordion.add(UIConstants.personalInformation, getPersonalInformationLayout(user))
+            accordion.add(getTranslation("usersettings"), getUsersettingsLayout(user))
+            accordion.add(getTranslation(UIConstants.personalInformation), getPersonalInformationLayout(user))
             accordion.add(UIConstants.externalAccess, getExternalAccesLayout(databaseAccessControl, user))
             add(accordion)
             val cancelButton = Button(UIConstants.cancel)
