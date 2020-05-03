@@ -16,7 +16,7 @@ class InboxPropertiesLayout(@Autowired val camundaService: CamundaService, @Auto
 
     private lateinit var document: Document
 
-    private val dueDate = DatePicker("duedate")
+    private val dueDate = DatePicker(getTranslation(UIConstants.duedate))
 
     override fun setDocument(document: Document, tags: List<Tag>) {
         this.document = document

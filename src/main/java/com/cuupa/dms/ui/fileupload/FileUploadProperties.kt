@@ -12,12 +12,12 @@ import java.time.format.DateTimeFormatter
 
 class FileUploadProperties : VerticalLayout() {
 
-    private val filename = TextField("Filename")
-    private val from = TextField("From")
-    private val date = DatePicker("Date")
-    private val time = TimePicker("Time")
-    private val tags = TextField("Tags")
-    private var dueDate = DatePicker("Duedate")
+    private val filename = TextField(getTranslation(UIConstants.filename))
+    private val from = TextField(getTranslation(UIConstants.from))
+    private val date = DatePicker(getTranslation(UIConstants.dateOfReciept))
+    private val time = TimePicker(getTranslation(UIConstants.timeOfReciept))
+    private val tags = TextField(getTranslation(UIConstants.tags))
+    private var dueDate = DatePicker(getTranslation(UIConstants.duedate))
 
     var content = ByteArray(0)
 

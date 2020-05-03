@@ -13,15 +13,20 @@ import com.vaadin.flow.component.timepicker.TimePicker
 
 abstract class PropertyLayout : VerticalLayout() {
 
-    protected val filename = TextField(getTranslation("filename"))
-    protected val sender = TextField(getTranslation("from"))
-    protected val date = DatePicker(getTranslation("date"))
-    protected val time = TimePicker(getTranslation("time"))
+    protected lateinit var filename: TextField
+    protected lateinit var sender: TextField
+    protected lateinit var date: DatePicker
+    protected lateinit var time: TimePicker
     protected val tags = MultiSelectListBox<Tag>()
 
     abstract fun setDocument(document: Document, tags: List<Tag>)
 
     fun buildGui() {
+        filename = TextField(getTranslation(UIConstants.filename))
+        sender = TextField(getTranslation(UIConstants.from))
+        date = DatePicker(getTranslation(UIConstants.dateOfReciept))
+        time = TimePicker(getTranslation(UIConstants.timeOfReciept))
+
         setSizeFull()
         setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER)
         justifyContentMode = FlexComponent.JustifyContentMode.START

@@ -1,5 +1,6 @@
 package com.cuupa.dms.ui.layouts
 
+import com.cuupa.dms.UIConstants
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.tabs.Tab
@@ -14,9 +15,9 @@ class PropertyTabs(previewLayout: VerticalLayout,
                    versionsLayout: VerticalLayout) : VerticalLayout() {
 
     init {
-        val tabPreview = Tab(getTranslation("preview"))
-        val tabProperties = Tab(getTranslation("properties"))
-        val tabVersions = Tab(getTranslation("versions"))
+        val tabPreview = Tab(getTranslation(UIConstants.preview))
+        val tabProperties = Tab(getTranslation(UIConstants.properties))
+        val tabVersions = Tab(getTranslation(UIConstants.versions))
         val tabs = Tabs(tabPreview, tabProperties, tabVersions)
         val tabsToPages: MutableMap<Tab, Component> = HashMap()
         tabsToPages[tabPreview] = previewLayout

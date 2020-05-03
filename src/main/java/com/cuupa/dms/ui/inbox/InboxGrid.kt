@@ -1,5 +1,6 @@
 package com.cuupa.dms.ui.inbox
 
+import com.cuupa.dms.UIConstants
 import com.cuupa.dms.service.LocalDateTimeFormatter
 import com.cuupa.dms.storage.StorageService
 import com.cuupa.dms.storage.document.Document
@@ -25,13 +26,19 @@ class InboxGrid(val storageService: StorageService) : Grid<Document>() {
     }
 
     private fun addContent() {
-        addComponentColumn { source: Document -> getIconToDisplay(source) }.setHeader("Open Task").setFlexGrow(10).key = "open task"
-        addColumn(Document::name).setHeader("Filename").setFlexGrow(20).setSortable(true).key = "name"
-        addColumn(Document::sender).setHeader("From").setFlexGrow(20).setSortable(true).key = "sender"
-        addColumn { (_, _, _, _, createDate) -> dateFormatter.format(createDate) }.setHeader("Date")
+        addComponentColumn { source: Document -> getIconToDisplay(source) }.setHeader("Open Task")
+                .setFlexGrow(10).key = "open task"
+        addColumn(Document::name).setHeader(getTranslation(UIConstants.filename)).setFlexGrow(20).setSortable(true)
+                .key = "name"
+        addColumn(Document::sender).setHeader(getTranslation(UIConstants.from)).setFlexGrow(20).setSortable(true).key =
+                "sender"
+        addColumn { (_, _, _, _, createDate) -> dateFormatter.format(createDate) }.setHeader(getTranslation
+        (UIConstants.dateOfReciept))
                 .setFlexGrow(20)
                 .setSortable(true).key = "createDate"
-        addColumn { document: Document -> getTaglist(document) }.setFlexGrow(20).setHeader("Tags").setSortable(true).key = "tags"
+        addColumn { document: Document -> getTaglist(document) }.setFlexGrow(20).setHeader(getTranslation(UIConstants
+                .tags))
+                .setSortable(true).key = "tags"
     }
 
     fun getIconToDisplay(document: Document): Icon {

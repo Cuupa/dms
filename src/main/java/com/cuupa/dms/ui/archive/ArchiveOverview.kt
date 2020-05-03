@@ -53,9 +53,8 @@ class ArchiveOverview(@Autowired val storageService: StorageService, @Autowired 
         setSizeFull()
         dataProvider = DocumentDataProvider(storageService, accessControl.principalName)
         val documentGrid = DocumentGrid()
-        documentPreview = DocumentPreview(storageService, accessControl, documentGrid, storageService.findTagsByOwner
-        (accessControl
-                .principalName))
+        documentPreview = DocumentPreview(storageService, accessControl, documentGrid, storageService
+                .findTagsByOwner(accessControl.principalName))
         documentPreview.isVisible = false
         documentGrid.addSelectionListener(itemClickEventComponentEventListener)
         documentGrid.dataProvider = dataProvider

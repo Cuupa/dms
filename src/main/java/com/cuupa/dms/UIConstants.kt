@@ -17,11 +17,16 @@ object UIConstants {
     const val preview = "preview"
     const val properties = "properties"
     const val versions = "versions"
+    const val tags = "tags"
 
     const val filename = "filename"
     const val from = "from"
     const val date = "date"
     const val time = "time"
+
+    const val duedate = "duedate"
+    const val dateOfReciept = "dateOfReciept"
+    const val timeOfReciept = "timeOfReciept"
 
     const val email = "email"
     const val username = "username"

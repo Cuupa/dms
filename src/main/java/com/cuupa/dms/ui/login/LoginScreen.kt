@@ -6,7 +6,6 @@ import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.dependency.CssImport
 import com.vaadin.flow.component.login.AbstractLogin.LoginEvent
 import com.vaadin.flow.component.login.LoginForm
-import com.vaadin.flow.component.login.LoginI18n
 import com.vaadin.flow.component.notification.Notification
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode
@@ -25,7 +24,7 @@ class LoginScreen(@param:Autowired private val accessControl: AccessControl) : F
     private fun buildUI() {
         setSizeFull()
         className = "login-screen"
-        val loginForm = LoginForm(LoginI18n())
+        val loginForm = LoginForm()
         loginForm.addLoginListener { event: LoginEvent -> login(event) }
         loginForm.addForgotPasswordListener { Notification.show("") }
         val centeringLayout = VerticalLayout()
