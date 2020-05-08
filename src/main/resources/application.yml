@@ -3,28 +3,37 @@ logging:
   level.org.apache.pdfbox.*: fatal
 
 services.remote:
-  semantic:
-    url: "http://10.80.22.5:8081/classificator/api/rest/1.0/classify"
+  semantic.url: "http://${semantic_host}/classificator/api/rest/1.0/classify"
+  converter.url: "http://${converter_host}/converter/api/rest/1.0/convert/"
+
+application.camunda:
+  mariadb_host: "${camunda_mariadb_host}"
+  mariadb_port: "${camunda_mariadb_port}"
+  databasename: "${camunda_databasename}"
+  camunda_user: "${camunda_user}"
+  camunda_password: "${camunda_password}"
 
 spring:
   data:
     mongodb:
-      host: "10.80.22.5"
-      port: 27017
-      database: dms
-      uri: "mongodb://10.80.22.5"
+      host: "${mongodb_host}"
+      port: ${mongodb_port}
+      database: "${mongodb_database}"
+      uri: "mongodb://${mongodb_host}"
   servlet:
     multipart:
       max-file-size: 10GB
       max-request-size: 10GB
 
   datasource:
-    url: jdbc:mariadb://10.80.22.5:3306/dmsusers
-    username: dmsuser
-    password: dmspassword
+    url: "jdbc:mariadb://${mariadb_host}/dmsusers"
+    username: ${dmsuser}
+    password: ${dmspassword}
     driver-class-name: org.mariadb.jdbc.Driver
     hikari:
       max-lifetime: 28800
   jpa:
     hibernate:
       ddl-auto: validate
+server:
+  port: 8080

@@ -1,5 +1,7 @@
 package com.cuupa.dms.ui.fileupload
 
+import com.cuupa.dms.service.extern.Document
+import com.cuupa.dms.service.extern.ExternConverterService
 import com.cuupa.dms.service.extern.ExternSemanticService
 import com.cuupa.dms.service.extern.SemanticResult
 import com.cuupa.dms.ui.documentviews.DocumentView
@@ -11,16 +13,20 @@ import com.vaadin.flow.server.StreamResource
 import org.apache.commons.io.IOUtils
 import java.io.ByteArrayInputStream
 import java.io.IOException
-import java.io.InputStream
 import java.time.LocalDate
 import java.time.LocalTime
 
-class FileUploadSucceededListener(private val externSemanticService: ExternSemanticService, private val buffer:
-MultiFileMemoryBuffer, private val properties: MutableList<FileUploadProperties>, private val preview:
+class FileUploadSucceededListener(private val externSemanticService: ExternSemanticService,
+                                  private val externConverterService: ExternConverterService, private val buffer:
+                                  MultiFileMemoryBuffer, private val properties: MutableList<FileUploadProperties>,
+                                  private val preview:
                                   MutableList<DocumentView>) : ComponentEventListener<SucceededEvent> {
 
     override fun onComponentEvent(event: SucceededEvent) {
-        val semanticResults = getResultFromSemantic(externSemanticService, buffer.getInputStream(event.fileName))
+        val documentContent = IOUtils.toByteArray(buffer.getInputStream(event.fileName))
+
+        val convertedDocument = externConverterService.convert(Document(event.fileName, documentContent, false))
+        val semanticResults = getResultFromSemantic(externSemanticService, convertedDocument.content)
 
         val fileUploadProperties = createFileUploadProperties(event, semanticResults)
 
@@ -80,9 +86,8 @@ MultiFileMemoryBuffer, private val properties: MutableList<FileUploadProperties>
     }
 
     private fun getResultFromSemantic(externSemanticService: ExternSemanticService,
-                                      inputStream: InputStream): List<SemanticResult> {
+                                      value: ByteArray): List<SemanticResult> {
         try {
-            val value = IOUtils.toByteArray(inputStream)
             return externSemanticService.analyze(value)
         } catch (e: Exception) {
             e.printStackTrace()

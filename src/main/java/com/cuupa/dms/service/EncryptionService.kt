@@ -8,11 +8,7 @@ import java.util.*
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 
-class EncryptionService {
-
-    private val decoder: Base64.Decoder = Base64.getDecoder()
-
-    private val encoder: Base64.Encoder = Base64.getEncoder()
+class EncryptionService(private val decoder: Base64.Decoder, private val encoder: Base64.Encoder) {
 
     @Throws(InvalidKeySpecException::class, NoSuchAlgorithmException::class)
     fun getEncryptedPassword(password: String, salt: String): String {

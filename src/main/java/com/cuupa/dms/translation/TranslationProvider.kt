@@ -10,12 +10,12 @@ class TranslationProvider : I18NProvider {
 
     private val log: Log = LogFactory.getLog(TranslationProvider::class.java)
 
-    private val BUNDLE_PREFIX = "translate"
+    private val bundlePrefix = "translate"
 
-    private val locale_en = Locale("en", "GB")
-    private val locale_de = Locale("de", "DE")
+    private val localeEn = Locale("en", "GB")
+    private val localeDe = Locale("de", "DE")
 
-    private val locales = listOf(locale_en, locale_de)
+    private val locales = listOf(localeEn, localeDe)
 
     override fun getProvidedLocales(): List<Locale> {
         return locales
@@ -27,7 +27,7 @@ class TranslationProvider : I18NProvider {
             return ""
         }
 
-        val resourceBundle = ResourceBundle.getBundle(BUNDLE_PREFIX, locale)
+        val resourceBundle = ResourceBundle.getBundle(bundlePrefix, locale)
         val value = resourceBundle.getString(key)
 
         if (params.isNotEmpty()) {

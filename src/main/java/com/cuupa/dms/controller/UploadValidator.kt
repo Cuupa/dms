@@ -23,5 +23,4 @@ class UploadValidator(@param:Autowired private val accessControl: AccessControl)
             Optional.of(ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No document"))
         } else Optional.empty()
     }
-
 }
