@@ -26,7 +26,7 @@ spring:
       max-request-size: 10GB
 
   datasource:
-    url: "jdbc:mariadb://${mariadb_host}/dmsusers"
+    url: "jdbc:mariadb://${mariadb_host}/${mariadb_database}"
     username: ${dmsuser}
     password: ${dmspassword}
     driver-class-name: org.mariadb.jdbc.Driver
