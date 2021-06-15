@@ -28,7 +28,7 @@
         <camunda.springboot.version>3.4.2</camunda.springboot.version>
         <camunda.bom.version>7.12.0</camunda.bom.version>
 
-        <pdfbox.version>2.0.19</pdfbox.version>
+        <pdfbox.version>2.0.24</pdfbox.version>
         <docx4j.version>6.1.2</docx4j.version>
         <mariadb.version>2.6.0</mariadb.version>
 
